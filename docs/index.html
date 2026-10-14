@@ -277,9 +277,21 @@
       });
 
       map = L.map("map", { zoomControl: true }).setView([39.5, -106.5], 5);
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribution: "&copy; OpenStreetMap & CARTO"
-      }).addTo(map);
+      const topoLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri, USGS, NOAA"
+      });
+      const lightLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri, HERE, Garmin"
+      });
+      const osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors"
+      });
+      topoLayer.addTo(map);
+      L.control.layers({
+        "USGS / Esri Topographic": topoLayer,
+        "Clean Light Gray Canvas": lightLayer,
+        "OpenStreetMap": osmLayer
+      }, null, { position: "bottomleft" }).addTo(map);
       countyLayerGroup = L.layerGroup().addTo(map);
       arcLayerGroup = L.layerGroup().addTo(map);
 
