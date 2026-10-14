@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FireTwin-US | Interactive 2-Minute Proposal Presentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    .top-bar {
+      background: #1e293b; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #334155; font-size: 13px;
+    }
+    .nav-btns { display: flex; gap: 8px; align-items: center; }
+    button {
+      background: #334155; color: #fff; border: 1px solid #475569; padding: 5px 12px;
+      border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px;
+    }
+    button.primary { background: #ea580c; border-color: #fb923c; }
+    button:hover { background: #475569; }
+    .slide-container { flex: 1; position: relative; overflow: hidden; }
+    .slide {
+      position: absolute; inset: 0; padding: 28px 44px; display: none;
+      flex-direction: column; gap: 16px; background: #f8fafc; color: #0f172a;
+    }
+    .slide.active { display: flex; }
+    .slide-hdr { border-bottom: 3px solid #ea580c; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
+    .slide-hdr h2 { font-size: 24px; color: #0f172a; }
+    .q-tag { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 0; align-items: center; }
+    .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .card h3 { font-size: 16px; color: #991b1b; margin-bottom: 8px; }
+    .card ul { padding-left: 18px; font-size: 14px; line-height: 1.55; color: #1e293b; }
+    .script-bar {
+      background: #0f172a; color: #e2e8f0; padding: 10px 24px; font-size: 13px;
+      border-top: 2px solid #ea580c; line-height: 1.45;
+    }
+    iframe { width: 100%; height: 100%; border: 2px solid #94a3b8; border-radius: 10px; background: #fff; }
+    img.fit { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; border: 1px solid #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div><b>CSE 6242 Proposal Presentation</b> — FireTwin-US (Interactive Deck + Live Embedded Dashboard)</div>
+    <div class="nav-btns">
+      <span id="timerDisplay" style="color:#fbbf24;font-weight:700;margin-right:8px;">⏱ 02:00</span>
+      <button onclick="startTimer()">▶ Start 2:00 Timer</button>
+      <button onclick="prevSlide()">← Prev</button>
+      <span id="slideIndicator">Slide 1 / 4</span>
+      <button class="primary" onclick="nextSlide()">Next →</button>
+    </div>
+  </div>
+
+  <div class="slide-container">
+    <!-- Slide 1 -->
+    <div class="slide active">
+      <div class="slide-hdr">
+        <h2>1. US Wildfire Risk Map (FireTwin-US): Problem, Users & Current Limits</h2>
+        <span class="q-tag">Heilmeier Q1, Q2, Q4</span>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+          <h3>🎯 Target Users & Core Objective (Q1, Q4)</h3>
+          <ul>
+            <li><b>45M+ US homes (~115M residents)</b> live in the Wildland-Urban Interface (WUI).</li>
+            <li><b>Goal (No Jargon)</b>: Help homeowners, renters, and local communities understand local wildfire conditions and explore real historical fires (<b>"Historical Twins"</b>) that burned under similar weather, terrain, and vegetation conditions.</li>
+          </ul>
+          <h3 style="margin-top:8px;">⚠️ Limits of Today's Real-World Systems (Q2)</h3>
+          <ul>
+            <li><b>USFS WRC & FEMA NRI</b> <i>(Finney et al. 2011; Thompson et al. 2011)</i>: Static 30-year percentiles; no historical fire analog lookup.</li>
+            <li><b>First Street Fire Factor & Watch Duty</b>: Proprietary black-box scores or active-incident-only alerts.</li>
+            <li><b>WIFIRE Firemap & LANDFIRE</b> <i>(Crawl et al. 2017; Rollins 2009)</i>: Built for tactical fire analysts, not citizens <i>(Cortes et al. 2024)</i>.</li>
+            <li><b>Alpha-Transparency Trap</b> <i>(Matzen et al. 2024)</i>: Faded uncertainty washes trick laypeople into feeling "safe."</li>
+          </ul>
+        </div>
+        <div style="height:100%;display:flex;align-items:center;justify-content:center;">
+          <img class="fit" src="figures/task_b_upgraded_sketch.png" alt="Task B Annotated Dashboard Sketch" />
+        </div>
+      </div>
+      <div class="script-bar">
+        🎙️ <b>Speaker Script (0:00–0:32)</b>: "[Q1, Q4] Over 45 million US homes sit in the Wildland-Urban Interface. We are building FireTwin-US, an interactive web map helping homeowners, renters, and communities understand local wildfire danger and explore real historical fires—'Historical Twins'—that burned under similar weather, terrain, and fuel conditions. [Q2] Today, federal portals like USFS FSim and FEMA NRI show static multi-decade averages, while WIFIRE targets active incident commanders. None retrieve historical analogs for citizens, and alpha-transparent uncertainty maps mislead laypeople into underestimating risk."
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+      <div class="slide-hdr">
+        <h2>2. Live Interactive Dashboard Innovation (Task B — Embedded Prototype)</h2>
+        <span class="q-tag">Heilmeier Q2 & Q3 (Visualization) — Try Dragging Sliders Live!</span>
+      </div>
+      <div style="flex:1;min-height:0;">
+        <iframe src="index.html" title="Live FireTwin-US Interactive Prototype"></iframe>
+      </div>
+      <div class="script-bar">
+        🎙️ <b>Speaker Script (0:32–1:05)</b>: "[Q3 — Visualization] Here is our live interactive dashboard prototype. Guided by Matzen et al. (2024), we replace alpha-transparency washes with a Solid Lightness-Varying Risk Map and crisp 80% analog contours. Pairing Zimnicki & Matzen (2026) and Diehl et al. (2017), users can drag 'What-If' weather and canopy sliders to see their GMM soft regime probabilities, plain-language frequency banner ('1 in 4 fires exceeded 300 acres'), and pinned Historical Fire Twin arcs update in real time."
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+      <div class="slide-hdr">
+        <h2>3. Computational Innovation & Executed Local POC Results</h2>
+        <span class="q-tag">Heilmeier Q2 & Q3 (Algorithms) — 73,221 Fires & 3,232 Counties</span>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;">
+          <h3>🧠 GMM-Conditioned Feature-Weighted CBR (Q3)</h3>
+          <ul>
+            <li><b>Pillar 1 (GMM Soft Regime Probabilities)</b>: Improves on annual-mean clustering <i>(Serra et al. 2025)</i> by clustering daily GridMET weather (<code>ERC, VPD, Wind, RH</code>), LANDFIRE canopy (<code>EVC, EVH</code>), and slope into 5 bioclimatic regimes.</li>
+            <li><b>Pillar 2 (RF-Weighted Continuous CBR + AnEn)</b>: Improves on discrete rule-table CBR <i>(Dorodnykh et al. 2022)</i> by weighting continuous retrieval with Random Forest escalation importances and forming 10th–90th percentile Analog Ensemble intervals <i>(Delle Monache et al. 2013)</i>.</li>
+          </ul>
+          <h3>📊 Executed Local POC Benchmarks</h3>
+          <ul>
+            <li><b>Escalation Risk RF</b>: <code>ROC-AUC = 0.8716</code>, <code>Brier = 0.0468</code>.</li>
+            <li><b>Retrieval Speed & Accuracy</b>: <code>0.050 ms/query</code> latency; reduces log-acres MAE vs. global k-NN; achieves <b>78.7% empirical coverage</b> on the 80% analog interval.</li>
+          </ul>
+        </div>
+        <div style="height:100%;display:flex;align-items:center;justify-content:center;">
+          <img class="fit" src="figures/fig2_poc_results.png" alt="POC Results" />
+        </div>
+      </div>
+      <div class="script-bar">
+        🎙️ <b>Speaker Script (1:05–1:38)</b>: "[Q3 — Algorithms] Computationally, we improve upon annual-average clustering (Serra et al., 2025) and discrete rule-table CBR (Dorodnykh et al., 2022) via GMM-Conditioned Feature-Weighted Case-Based Reasoning. Using soft GMM regime probabilities and Random Forest feature weights over daily GridMET weather and LANDFIRE fuels, our local POC across 73,221 US fires achieved 0.872 ROC-AUC, 0.05-millisecond retrieval latency, and 78.7% empirical coverage on the 10th-to-90th percentile burned-area interval."
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+      <div class="slide-hdr">
+        <h2>4. Evaluation, Risks, Payoffs & 10-Week Work Package Schedule</h2>
+        <span class="q-tag">Heilmeier Q5, Q6, Q7, Q8, Q9</span>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="height:100%;display:flex;flex-direction:column;justify-content:center;gap:10px;">
+          <h3>🛡️ Risks, Mitigations & Payoffs (Q5, Q6)</h3>
+          <ul>
+            <li><b>Risk 1 (Scale & Latency)</b>: Mitigated via DuckDB/Parquet & per-regime BallTrees (<code>0.05 ms</code> verified).</li>
+            <li><b>Risk 2 (Deterministic Misinterpretation)</b>: Mitigated via 10th–90th percentile intervals & explicit limitation notes.</li>
+            <li><b>Payoff</b>: Reduces cognitive effort for citizens while grounding wildfire risk in verifiable historical precedents.</li>
+          </ul>
+          <h3>🗓️ Cost ($0), Midterm/Final Exams & Effort (Q7, Q8, Q9)</h3>
+          <ul>
+            <li><b>Cost (Q7)</b>: <b>$0</b> (public USFS/FEMA/Zenodo data + open-source stack).</li>
+            <li><b>Midterm Exam (W5)</b>: Unified DuckDB API + beta map (<code>ROC-AUC >= 0.85</code>, <code><50 ms</code> retrieval).</li>
+            <li><b>Final Exam (W8–W10)</b>: CBR MAE/calibration ablations vs. global k-NN + <code>N=20</code> non-specialist comprehension/SUS study.</li>
+            <li><b>All team members have contributed and will contribute a similar amount of effort.</b></li>
+          </ul>
+        </div>
+        <div style="height:100%;display:flex;align-items:center;justify-content:center;">
+          <img class="fit" src="figures/fig3_gantt.png" alt="Gantt Schedule" />
+        </div>
+      </div>
+      <div class="script-bar">
+        🎙️ <b>Speaker Script (1:38–1:56)</b>: "[Q5–Q9] We mitigate latency and misinterpretation risks using pre-indexed BallTrees and calibrated 10th-to-90th percentile ranges. At $0 cost across 5 integrated work packages over 10 weeks, our Week 5 Midterm Exam delivers the full backend and beta map, and our Final Exam benchmarks CBR accuracy alongside a 20-user study. All team members have contributed and will contribute a similar amount of effort."
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let cur = 0;
+    const slides = document.querySelectorAll(".slide");
+    function showSlide(idx) {
+      slides[cur].classList.remove("active");
+      cur = (idx + slides.length) % slides.length;
+      slides[cur].classList.add("active");
+      document.getElementById("slideIndicator").textContent = `Slide ${cur + 1} / ${slides.length}`;
+    }
+    function nextSlide() { showSlide(cur + 1); }
+    function prevSlide() { showSlide(cur - 1); }
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") nextSlide();
+      if (e.key === "ArrowLeft") prevSlide();
+    });
+
+    let timerInt = null;
+    function startTimer() {
+      if (timerInt) clearInterval(timerInt);
+      let rem = 120;
+      const el = document.getElementById("timerDisplay");
+      timerInt = setInterval(() => {
+        rem--;
+        const m = String(Math.floor(rem / 60)).padStart(2, "0");
+        const s = String(rem % 60).padStart(2, "0");
+        el.textContent = `⏱ ${m}:${s}`;
+        if (rem <= 0) clearInterval(timerInt);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<mxfile host="app.diagrams.net" modified="2026-10-14T19:40:00.000Z" agent="Mozilla/5.0" version="24.0.0">
+  <diagram id="firetwin-task-b" name="FireTwin-US Dashboard Wireframe">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Top Header -->
+        <mxCell id="hdr" value="FireTwin-US  |  Interactive US Wildfire Risk &amp; Historical Fire Twin Dashboard   [Search County/ZIP: Boulder County, CO]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=#0F172A;fontColor=#FFFFFF;fontStyle=1;fontSize=14;align=left;spacingLeft=16;" vertex="1" parent="1">
+          <mxGeometry x="30" y="20" width="1100" height="45" as="geometry" />
+        </mxCell>
+        <!-- Left Panel: What-If Sliders -->
+        <mxCell id="p1" value="&lt;b&gt;① Interactive &#39;What-If&#39; Drivers&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Addresses Diehl et al. 2017 &amp;amp; Rollins 2009)&lt;/i&gt;&lt;hr&gt;&lt;div align=&quot;left&quot;&gt;• Energy Release (ERC): &lt;b&gt;84 (92nd %ile)&lt;/b&gt;&lt;br&gt;[==========|==] &lt;br&gt;&lt;br&gt;• Vapor Press. Deficit (VPD): &lt;b&gt;2.6 kPa&lt;/b&gt;&lt;br&gt;[=========|===]&lt;br&gt;&lt;br&gt;• 10m Wind Speed: &lt;b&gt;22 mph&lt;/b&gt;&lt;br&gt;[========|====]&lt;br&gt;&lt;br&gt;• Relative Humidity (RH): &lt;b&gt;16%&lt;/b&gt;&lt;br&gt;[==|==========]&lt;br&gt;&lt;br&gt;• Terrain Slope: &lt;b&gt;14° Steep&lt;/b&gt;&lt;br&gt;[=======|=====]&lt;br&gt;&lt;br&gt;• Canopy Cover (EVC): &lt;b&gt;62% Dense&lt;/b&gt;&lt;br&gt;[=======|=====]&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;verticalAlign=top;spacingTop=8;spacingLeft=10;spacingRight=10;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="80" width="260" height="390" as="geometry" />
+        </mxCell>
+        <!-- Bottom-Left: GMM Soft Regime Bar -->
+        <mxCell id="p2" value="&lt;b&gt;② GMM Soft Regime Probabilities γ_k(x)&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Supports soft CBR matching — Serra et al. 2025)&lt;/i&gt;&lt;hr&gt;&lt;b style=&quot;color:#991B1B&quot;&gt;[ 68% R2 Montane ]&lt;/b&gt; &lt;b style=&quot;color:#EA580C&quot;&gt;[ 24% R1 Arid ]&lt;/b&gt; [8% R3]&lt;br&gt;• Prior weights condition historical fire retrieval" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F5F9;strokeColor=#CBD5E1;verticalAlign=top;spacingTop=8;fontSize=11.5;" vertex="1" parent="1">
+          <mxGeometry x="30" y="485" width="260" height="145" as="geometry" />
+        </mxCell>
+        <!-- Center-Top: Bounded Lightness Map -->
+        <mxCell id="p3" value="&lt;b&gt;③ Bounded Lightness Choropleth &amp;amp; Crisp 80% Analog Contour Map&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Eliminates misleading alpha-transparency washes — Matzen et al. 2024; MacEachren et al. 2012)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#94A3B8;verticalAlign=top;spacingTop=8;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="305" y="80" width="490" height="360" as="geometry" />
+        </mxCell>
+        <!-- Map County Boxes inside p3 -->
+        <mxCell id="c1" value="Larimer, CO&lt;br&gt;(Mod: 11%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FED7AA;strokeColor=#64748B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="335" y="160" width="130" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="Boulder, CO ★&lt;br&gt;(High Risk: 24%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EA580C;strokeColor=#0F172A;strokeWidth=3;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="465" y="160" width="145" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Weld, CO&lt;br&gt;(Mod-Low: 7%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FDBA74;strokeColor=#64748B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="160" width="130" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="Clear Creek, CO&lt;br&gt;(High: 19%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F97316;strokeColor=#64748B;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="335" y="265" width="130" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="Jefferson, CO&lt;br&gt;(Extreme: 31%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#991B1B;strokeColor=#64748B;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="465" y="265" width="145" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" value="Adams, CO&lt;br&gt;(Low: 3%)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#64748B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="265" width="130" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="contour" value="Crisp Dashed Contour: 80% Analog Spread Zone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0F172A;strokeWidth=2;dashed=1;verticalAlign=bottom;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="445" y="145" width="185" height="255" as="geometry" />
+        </mxCell>
+        <!-- Center-Bottom: Verbal Framing Banner -->
+        <mxCell id="p4" value="&lt;b style=&quot;color:#9A3412&quot;&gt;④ Synchronized Verbal Frequency Framing &amp;amp; 10th–90th %ile Burned-Area Range&lt;/b&gt; &lt;i&gt;(Zimnicki &amp;amp; Matzen 2026)&lt;/i&gt;&lt;hr&gt;&lt;b&gt;“High Escalation Risk (24% probability — about 1 in 4 historical fires under these exact conditions exceeded 300 acres).”&lt;/b&gt;&lt;br&gt;&lt;br&gt;10th–90th Percentile Analog Interval: &lt;b style=&quot;background:#FED7AA;padding:2px 6px;&quot;&gt;p10: 18 ac&lt;/b&gt; — &lt;b style=&quot;background:#EA580C;color:#FFF;padding:2px 8px;&quot;&gt;Median: 340 ac&lt;/b&gt; — &lt;b style=&quot;background:#FED7AA;padding:2px 6px;&quot;&gt;p90: 4,850 ac&lt;/b&gt;&lt;br&gt;&lt;i style=&quot;font-size:10px;color:#475569;&quot;&gt;⚠ Limitation Note: Historical fire twins reflect empirical outcomes under matching drivers, not a deterministic perimeter forecast.&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=2;verticalAlign=top;spacingTop=8;fontSize=11.5;" vertex="1" parent="1">
+          <mxGeometry x="305" y="455" width="490" height="175" as="geometry" />
+        </mxCell>
+        <!-- Right Panel: DNA Bars & Historical Twin Cards -->
+        <mxCell id="p5" value="&lt;b&gt;⑤ Environmental DNA &amp;amp; Top-k Fire Twins&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Addresses Dorodnykh 2022 &amp;amp; Kübler et al. 2020)&lt;/i&gt;&lt;hr&gt;&lt;div align=&quot;left&quot;&gt;&lt;b&gt;Normalized Driver Profile (Query vs. Twins):&lt;/b&gt;&lt;br&gt;ERC: [■■■■■■■■■] vs [■■■■■■■■■]&lt;br&gt;VPD: [■■■■■■■■] vs [■■■■■■■■]&lt;br&gt;Wind: [■■■■■■■] vs [■■■■■■■]&lt;br&gt;Slope: [■■■■■■] vs [■■■■■■]&lt;hr&gt;&lt;b&gt;Twin #1: Calwood Fire (CO, Oct 2020)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;background:#DCFCE7;color:#166534;padding:1px 4px;&quot;&gt;95.4% Match&lt;/span&gt; &lt;span style=&quot;background:#991B1B;color:#FFF;padding:1px 4px;&quot;&gt;10,113 ac&lt;/span&gt;&lt;br&gt;ERC 86 (+2) | Wind 24 mph | Slope 15° | R2 Conifer&lt;hr&gt;&lt;b&gt;Twin #2: Cold Springs Fire (CO, Jul 2016)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;background:#DCFCE7;color:#166534;padding:1px 4px;&quot;&gt;92.8% Match&lt;/span&gt; &lt;span style=&quot;background:#EA580C;color:#FFF;padding:1px 4px;&quot;&gt;528 ac&lt;/span&gt;&lt;br&gt;ERC 82 (-2) | Wind 20 mph | Slope 13° | R2 Conifer&lt;hr&gt;&lt;b&gt;Twin #3: Brian Head Fire (UT, Jun 2017)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;background:#DCFCE7;color:#166534;padding:1px 4px;&quot;&gt;90.1% Match&lt;/span&gt; &lt;span style=&quot;background:#991B1B;color:#FFF;padding:1px 4px;&quot;&gt;71,673 ac&lt;/span&gt;&lt;br&gt;ERC 88 (+4) | Wind 23 mph | Slope 14° | R2/R1&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#94A3B8;verticalAlign=top;spacingTop=8;spacingLeft=10;spacingRight=10;fontSize=11.5;" vertex="1" parent="1">
+          <mxGeometry x="810" y="80" width="320" height="550" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

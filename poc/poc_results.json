@@ -1,0 +1,568 @@
+{
+  "dataset_summary": {
+    "fpa_2020_rows": 73221,
+    "fpa_2020_clean_rows": 73221,
+    "fpa_full_rows_1992_2020": 2270000,
+    "fema_nri_counties": 3232,
+    "fema_nri_tracts": 85154,
+    "usfs_wrc_communities": 32038,
+    "usfs_wrc_counties": 3144
+  },
+  "clustering_metrics": {
+    "4": {
+      "gmm_bic": 214854.12382383243,
+      "gmm_aic": 211206.152998872,
+      "gmm_silhouette": 0.13711115933833187,
+      "gmm_dbi": 2.6489983885108703,
+      "km_silhouette": 0.209443705378701,
+      "km_dbi": 1.513186122970646
+    },
+    "5": {
+      "gmm_bic": 197867.3834757628,
+      "gmm_aic": 193305.51599319227,
+      "gmm_silhouette": 0.0993101265551957,
+      "gmm_dbi": 2.500232178262524,
+      "km_silhouette": 0.17737486096148278,
+      "km_dbi": 1.6696312017754784
+    },
+    "6": {
+      "gmm_bic": 187378.88515044,
+      "gmm_aic": 181903.12101025938,
+      "gmm_silhouette": 0.09679396017714487,
+      "gmm_dbi": 2.359041933075717,
+      "km_silhouette": 0.16355803463466662,
+      "km_dbi": 1.7007540254825912
+    },
+    "7": {
+      "gmm_bic": 149849.04084599257,
+      "gmm_aic": 143459.3800482018,
+      "gmm_silhouette": 0.082748448942825,
+      "gmm_dbi": 2.3573131645738803,
+      "km_silhouette": 0.16536015889907277,
+      "km_dbi": 1.6513368123731724
+    }
+  },
+  "cluster_profiles": [
+    {
+      "cluster_id": 3,
+      "count": 13416,
+      "pct_fires": 18.322612365305034,
+      "mean_erc": 84.60405485986881,
+      "mean_vpd": 2.709131633870006,
+      "mean_rmin": 11.670401212105668,
+      "mean_wind_vs": 3.332505963029219,
+      "mean_temp_c": 32.57523103417141,
+      "mean_elev_m": 1099.8429487179487,
+      "mean_slope_deg": 3.088700059630292,
+      "mean_precip_mm": 216.8018038163387,
+      "mean_ndvi": 0.29797033392963623,
+      "pct_large_fires": 3.838700059630292,
+      "mean_fire_size_acres": 180.23776535480027,
+      "p90_fire_size_acres": 8.0,
+      "top_states": [
+        "AZ",
+        "CA",
+        "CO",
+        "UT"
+      ],
+      "pct_human": 73.84466308884913,
+      "regime_name": "R1: Arid Western Shrub/Forest (Extreme ERC & VPD)",
+      "rank": 1
+    },
+    {
+      "cluster_id": 2,
+      "count": 10474,
+      "pct_fires": 14.30463937941301,
+      "mean_erc": 53.518808478136336,
+      "mean_vpd": 1.5170297880465915,
+      "mean_rmin": 24.724260500819486,
+      "mean_wind_vs": 3.8719209471071223,
+      "mean_temp_c": 25.616421644565207,
+      "mean_elev_m": 1207.777162497613,
+      "mean_slope_deg": 11.706415886958181,
+      "mean_precip_mm": 699.6206797784992,
+      "mean_ndvi": 0.4117013557380179,
+      "pct_large_fires": 4.668703456177201,
+      "mean_fire_size_acres": 630.6028527783083,
+      "p90_fire_size_acres": 13.0,
+      "top_states": [
+        "CA",
+        "OR",
+        "MT",
+        "WA"
+      ],
+      "pct_human": 58.678632805041055,
+      "regime_name": "R2: Steep Montane Conifer & Complex Terrain",
+      "rank": 2
+    },
+    {
+      "cluster_id": 0,
+      "count": 12822,
+      "pct_fires": 17.51136968902364,
+      "mean_erc": 51.79309000155982,
+      "mean_vpd": 1.528809078146935,
+      "mean_rmin": 22.477250418226426,
+      "mean_wind_vs": 3.8843316175323666,
+      "mean_temp_c": 25.996123911991955,
+      "mean_elev_m": 879.3660895336141,
+      "mean_slope_deg": 1.7478552487911403,
+      "mean_precip_mm": 389.60910934331616,
+      "mean_ndvi": 0.32821556699422866,
+      "pct_large_fires": 3.7513648416783654,
+      "mean_fire_size_acres": 69.03164248947122,
+      "p90_fire_size_acres": 14.0,
+      "top_states": [
+        "CA",
+        "TX",
+        "CO",
+        "MT"
+      ],
+      "pct_human": 72.00124785524879,
+      "regime_name": "R3: Semi-Arid Plains & Rangeland (High Wind)",
+      "rank": 3
+    },
+    {
+      "cluster_id": 1,
+      "count": 24766,
+      "pct_fires": 33.82362983297141,
+      "mean_erc": 34.124848582734394,
+      "mean_vpd": 0.9520774448841154,
+      "mean_rmin": 34.35445428089054,
+      "mean_wind_vs": 4.1407292255511585,
+      "mean_temp_c": 22.60430032304521,
+      "mean_elev_m": 188.23467657272067,
+      "mean_slope_deg": 2.224662844221917,
+      "mean_precip_mm": 1187.3548816926432,
+      "mean_ndvi": 0.41934870386820644,
+      "pct_large_fires": 1.8048938060243884,
+      "mean_fire_size_acres": 19.686130178470485,
+      "p90_fire_size_acres": 10.0,
+      "top_states": [
+        "TX",
+        "NY",
+        "FL",
+        "NC"
+      ],
+      "pct_human": 85.61334087054834,
+      "regime_name": "R4: Warm Southern/Coastal Mixed WUI",
+      "rank": 4
+    },
+    {
+      "cluster_id": 4,
+      "count": 11743,
+      "pct_fires": 16.0377487332869,
+      "mean_erc": 22.18615345312101,
+      "mean_vpd": 0.7045610150728093,
+      "mean_rmin": 41.238849382084595,
+      "mean_wind_vs": 4.580064719407306,
+      "mean_temp_c": 18.66861538169517,
+      "mean_elev_m": 312.34922932811037,
+      "mean_slope_deg": 4.5688495273780125,
+      "mean_precip_mm": 1169.5881801924552,
+      "mean_ndvi": 0.35060972494251896,
+      "pct_large_fires": 1.1921996082772717,
+      "mean_fire_size_acres": 10.209362488290898,
+      "p90_fire_size_acres": 9.0,
+      "top_states": [
+        "NY",
+        "NC",
+        "TX",
+        "PA"
+      ],
+      "pct_human": 84.25444945925233,
+      "regime_name": "R5: Humid Eastern/Temperate Deciduous & Ag",
+      "rank": 5
+    }
+  ],
+  "risk_model_metrics": {
+    "roc_auc": 0.8716,
+    "pr_auc": 0.2115,
+    "brier_score": 0.0468,
+    "log_size_mae": 0.6195,
+    "top_10_features": [
+      [
+        "Population",
+        0.20038672630615878
+      ],
+      [
+        "EVH",
+        0.06799523452565488
+      ],
+      [
+        "EVC",
+        0.0657425121713851
+      ],
+      [
+        "Elevation",
+        0.05807931945516131
+      ],
+      [
+        "No_FireStation_5.0km",
+        0.056541473178790526
+      ],
+      [
+        "rmin",
+        0.05582481449072109
+      ],
+      [
+        "vpd",
+        0.050948689146424087
+      ],
+      [
+        "Annual_precipitation",
+        0.04783901753234902
+      ],
+      [
+        "NDVI-1day",
+        0.043406873146687494
+      ],
+      [
+        "tmmx",
+        0.043266758425762795
+      ]
+    ]
+  },
+  "cbr_evaluation": {
+    "knn_global_mae_log": 0.651,
+    "cbr_clustered_weighted_mae_log": 0.6472,
+    "mae_improvement_pct": 0.58,
+    "analog_80pct_interval_coverage": 78.7,
+    "query_time_1000_ms": 49.61,
+    "per_query_latency_ms": 0.05
+  },
+  "case_studies": [
+    {
+      "community": "Paradise / Butte County, CA",
+      "query_fire": "Butte/Tehama/Glenn Complex",
+      "query_date": "2020-08-22",
+      "query_size_acres": 19609.0,
+      "regime": "R1: Arid Western Shrub/Forest (Extreme ERC & VPD)",
+      "query_erc": 84.0,
+      "query_wind_mps": 2.4,
+      "query_rmin_pct": 20.3,
+      "query_temp_c": 36.6,
+      "analogs": [
+        {
+          "fire_name": "Btu Lightning 2020",
+          "state": "CA",
+          "county": "Butte",
+          "date": "2020-08-17",
+          "size_acres": 261.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 82.0,
+          "wind_mps": 2.3,
+          "rmin_pct": 20.8,
+          "temp_c": 39.4,
+          "slope_deg": 2.0,
+          "similarity_pct": 90.8
+        },
+        {
+          "fire_name": "Estom Way  Thermalito",
+          "state": "CA",
+          "county": "BUTTE",
+          "date": "2020-08-17",
+          "size_acres": 1167.0,
+          "cause": "Natural",
+          "erc": 81.0,
+          "wind_mps": 2.3,
+          "rmin_pct": 21.6,
+          "temp_c": 38.9,
+          "slope_deg": 0.0,
+          "similarity_pct": 90.5
+        },
+        {
+          "fire_name": "Grand",
+          "state": "CA",
+          "county": "BUTTE",
+          "date": "2020-07-13",
+          "size_acres": 11.0,
+          "cause": "Equipment and vehicle use",
+          "erc": 86.0,
+          "wind_mps": 1.5,
+          "rmin_pct": 16.5,
+          "temp_c": 36.5,
+          "slope_deg": 1.0,
+          "similarity_pct": 86.5
+        },
+        {
+          "fire_name": "Farmland Av  Mckee",
+          "state": "CA",
+          "county": "nan",
+          "date": "2020-07-15",
+          "size_acres": 48.0,
+          "cause": "Power generation/transmission/distribution",
+          "erc": 79.0,
+          "wind_mps": 2.7,
+          "rmin_pct": 22.1,
+          "temp_c": 35.6,
+          "slope_deg": 2.0,
+          "similarity_pct": 86.1
+        },
+        {
+          "fire_name": "Hills",
+          "state": "CA",
+          "county": "Fresno",
+          "date": "2020-08-15",
+          "size_acres": 2121.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 79.0,
+          "wind_mps": 2.7,
+          "rmin_pct": 22.3,
+          "temp_c": 39.9,
+          "slope_deg": 0.0,
+          "similarity_pct": 85.4
+        }
+      ]
+    },
+    {
+      "community": "Boulder / Foothills WUI, CO",
+      "query_fire": "Calwood",
+      "query_date": "2020-10-17",
+      "query_size_acres": 10106.0,
+      "regime": "R3: Semi-Arid Plains & Rangeland (High Wind)",
+      "query_erc": 77.0,
+      "query_wind_mps": 11.0,
+      "query_rmin_pct": 17.1,
+      "query_temp_c": 16.1,
+      "analogs": [
+        {
+          "fire_name": "Fdh-Mtlg44-366",
+          "state": "MT",
+          "county": "Wheatland",
+          "date": "2020-10-12",
+          "size_acres": 430.0,
+          "cause": "Power generation/transmission/distribution",
+          "erc": 56.0,
+          "wind_mps": 12.3,
+          "rmin_pct": 28.3,
+          "temp_c": 14.4,
+          "slope_deg": 1.0,
+          "similarity_pct": 62.4
+        },
+        {
+          "fire_name": "Sourdough",
+          "state": "MT",
+          "county": "Beaverhead",
+          "date": "2020-10-30",
+          "size_acres": 6352.4,
+          "cause": "Recreation and ceremony",
+          "erc": 43.0,
+          "wind_mps": 7.3,
+          "rmin_pct": 18.4,
+          "temp_c": 12.1,
+          "slope_deg": 6.0,
+          "similarity_pct": 62.2
+        },
+        {
+          "fire_name": "Point",
+          "state": "CA",
+          "county": "Placer",
+          "date": "2020-10-26",
+          "size_acres": 99.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 93.0,
+          "wind_mps": 6.7,
+          "rmin_pct": 1.0,
+          "temp_c": 13.1,
+          "slope_deg": 6.0,
+          "similarity_pct": 62.1
+        },
+        {
+          "fire_name": "Porphyry",
+          "state": "MT",
+          "county": "Fergus",
+          "date": "2020-08-07",
+          "size_acres": 10.0,
+          "cause": "Natural",
+          "erc": 54.0,
+          "wind_mps": 7.2,
+          "rmin_pct": 27.1,
+          "temp_c": 21.9,
+          "slope_deg": 16.0,
+          "similarity_pct": 62.0
+        },
+        {
+          "fire_name": "Cub",
+          "state": "NM",
+          "county": "Catron",
+          "date": "2020-06-28",
+          "size_acres": 25950.0,
+          "cause": "Natural",
+          "erc": 91.0,
+          "wind_mps": 6.1,
+          "rmin_pct": 20.5,
+          "temp_c": 23.5,
+          "slope_deg": 6.0,
+          "similarity_pct": 61.6
+        }
+      ]
+    },
+    {
+      "community": "Medford / Rogue Valley (Jackson Co.), OR",
+      "query_fire": "S. Obenchain",
+      "query_date": "2020-09-08",
+      "query_size_acres": 14787.0,
+      "regime": "R3: Semi-Arid Plains & Rangeland (High Wind)",
+      "query_erc": 85.0,
+      "query_wind_mps": 11.0,
+      "query_rmin_pct": 7.5,
+      "query_temp_c": 28.0,
+      "analogs": [
+        {
+          "fire_name": "Cr 306",
+          "state": "TX",
+          "county": "Crockett",
+          "date": "2020-05-07",
+          "size_acres": 10.0,
+          "cause": "Natural",
+          "erc": 68.0,
+          "wind_mps": 9.0,
+          "rmin_pct": 20.9,
+          "temp_c": 33.5,
+          "slope_deg": 5.0,
+          "similarity_pct": 71.5
+        },
+        {
+          "fire_name": "Rocker B Ranch",
+          "state": "TX",
+          "county": "Reagan",
+          "date": "2020-05-07",
+          "size_acres": 50.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 63.0,
+          "wind_mps": 8.5,
+          "rmin_pct": 22.1,
+          "temp_c": 32.6,
+          "slope_deg": 1.0,
+          "similarity_pct": 68.6
+        },
+        {
+          "fire_name": "Reagan/Irion County Line",
+          "state": "TX",
+          "county": "Reagan",
+          "date": "2020-05-07",
+          "size_acres": 10.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 63.0,
+          "wind_mps": 8.7,
+          "rmin_pct": 24.4,
+          "temp_c": 31.7,
+          "slope_deg": 2.0,
+          "similarity_pct": 68.2
+        },
+        {
+          "fire_name": "Cripple Creek",
+          "state": "TX",
+          "county": "Motley",
+          "date": "2020-06-09",
+          "size_acres": 30.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 56.0,
+          "wind_mps": 8.1,
+          "rmin_pct": 14.6,
+          "temp_c": 28.7,
+          "slope_deg": 2.0,
+          "similarity_pct": 67.8
+        },
+        {
+          "fire_name": "Almeda",
+          "state": "OR",
+          "county": "Jackson",
+          "date": "2020-09-08",
+          "size_acres": 3200.0,
+          "cause": "Arson/incendiarism",
+          "erc": 79.0,
+          "wind_mps": 9.3,
+          "rmin_pct": 7.2,
+          "temp_c": 28.0,
+          "slope_deg": 3.0,
+          "similarity_pct": 66.0
+        }
+      ]
+    },
+    {
+      "community": "Bastrop Lost Pines WUI, TX",
+      "query_fire": "Row",
+      "query_date": "2020-08-10",
+      "query_size_acres": 28.0,
+      "regime": "R3: Semi-Arid Plains & Rangeland (High Wind)",
+      "query_erc": 46.0,
+      "query_wind_mps": 5.1,
+      "query_rmin_pct": 31.2,
+      "query_temp_c": 38.1,
+      "analogs": [
+        {
+          "fire_name": "Comanche Creek",
+          "state": "TX",
+          "county": "Blanco",
+          "date": "2020-08-25",
+          "size_acres": 406.0,
+          "cause": "Natural",
+          "erc": 52.0,
+          "wind_mps": 3.1,
+          "rmin_pct": 26.6,
+          "temp_c": 35.2,
+          "slope_deg": 2.0,
+          "similarity_pct": 82.5
+        },
+        {
+          "fire_name": "Red Stag",
+          "state": "TX",
+          "county": "Burnet",
+          "date": "2020-08-31",
+          "size_acres": 20.0,
+          "cause": "Equipment and vehicle use",
+          "erc": 51.0,
+          "wind_mps": 6.1,
+          "rmin_pct": 37.0,
+          "temp_c": 36.0,
+          "slope_deg": 5.0,
+          "similarity_pct": 81.0
+        },
+        {
+          "fire_name": "Camp Constantine",
+          "state": "TX",
+          "county": "Palo Pinto",
+          "date": "2020-08-30",
+          "size_acres": 60.0,
+          "cause": "Natural",
+          "erc": 62.0,
+          "wind_mps": 5.0,
+          "rmin_pct": 24.9,
+          "temp_c": 37.7,
+          "slope_deg": 6.0,
+          "similarity_pct": 80.6
+        },
+        {
+          "fire_name": "Grass/Brush #14 2020",
+          "state": "TX",
+          "county": "Bosque",
+          "date": "2020-08-17",
+          "size_acres": 30.0,
+          "cause": "Debris and open burning",
+          "erc": 55.0,
+          "wind_mps": 3.6,
+          "rmin_pct": 37.4,
+          "temp_c": 33.4,
+          "slope_deg": 4.0,
+          "similarity_pct": 79.6
+        },
+        {
+          "fire_name": "18565 Cr 124",
+          "state": "TX",
+          "county": "Grimes",
+          "date": "2020-08-19",
+          "size_acres": 30.0,
+          "cause": "Missing data/not specified/undetermined",
+          "erc": 49.0,
+          "wind_mps": 3.5,
+          "rmin_pct": 19.7,
+          "temp_c": 35.6,
+          "slope_deg": 1.0,
+          "similarity_pct": 79.3
+        }
+      ]
+    }
+  ],
+  "runtime_sec": 9.54
+}
