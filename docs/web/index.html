@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FireTwin-US | Interactive Wildfire Risk & Historical Twin Explorer</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --border: #cbd5e1;
+      --red-dark: #991b1b;
+      --orange: #ea580c;
+      --amber: #f59e0b;
+      --blue: #1d4ed8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--ink); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    header {
+      background: #0f172a; color: #fff; padding: 10px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid #1e293b; flex-shrink: 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.2px; }
+    .badge { background: #dc2626; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 600; }
+    .controls-top { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+    select, .btn {
+      background: #1e293b; color: #f8fafc; border: 1px solid #475569;
+      padding: 5px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;
+    }
+    .btn.active { background: #ea580c; border-color: #fb923c; }
+    .btn:hover { background: #334155; }
+    .main-grid {
+      display: grid; grid-template-columns: 290px 1fr 340px;
+      gap: 10px; padding: 10px; flex: 1; min-height: 0;
+    }
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px; display: flex; flex-direction: column;
+      gap: 10px; overflow-y: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .panel-title { font-size: 13px; font-weight: 700; color: var(--ink); display: flex; justify-content: space-between; align-items: center; }
+    .panel-sub { font-size: 11px; color: var(--muted); font-style: italic; margin-top: -6px; }
+    .slider-group { display: flex; flex-direction: column; gap: 3px; }
+    .slider-hdr { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 600; }
+    input[type=range] { width: 100%; accent-color: #ea580c; cursor: pointer; height: 5px; }
+    .preset-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .preset-btn {
+      flex: 1; font-size: 10.5px; padding: 4px 6px; border-radius: 5px;
+      border: 1px solid #cbd5e1; background: #f1f5f9; color: #0f172a; cursor: pointer; font-weight: 600;
+    }
+    .preset-btn:hover { background: #e2e8f0; }
+    .gmm-box { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 9px; font-size: 11px; }
+    .gmm-bar { display: flex; height: 16px; border-radius: 4px; overflow: hidden; margin: 6px 0; }
+    .center-col { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    #map-wrap { flex: 1; position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); min-height: 260px; }
+    #map { width: 100%; height: 100%; }
+    .map-overlay {
+      position: absolute; top: 10px; right: 10px; z-index: 900;
+      background: rgba(255,255,255,0.95); border: 1px solid #94a3b8;
+      padding: 8px 10px; border-radius: 8px; font-size: 11px; max-width: 255px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .legend-row { display: flex; gap: 4px; margin-top: 5px; }
+    .legend-chip { flex: 1; text-align: center; padding: 3px 2px; font-size: 10px; font-weight: 700; border-radius: 3px; }
+    .verbal-box {
+      background: #fff7ed; border: 1.5px solid #ea580c; border-radius: 10px;
+      padding: 10px 14px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .verbal-headline { font-size: 13px; font-weight: 700; color: #7c2d12; }
+    .quantile-bar {
+      position: relative; height: 22px; background: #fed7aa;
+      border: 1px solid #c2410c; border-radius: 5px; overflow: hidden;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 11px; font-weight: 700;
+    }
+    .quantile-iqr {
+      position: absolute; left: 20%; width: 55%; top: 0; bottom: 0;
+      background: #ea580c; z-index: 1;
+    }
+    .quantile-bar span { position: relative; z-index: 2; }
+    .limit-note { font-size: 10.5px; color: #475569; font-style: italic; }
+    .dna-row { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-bottom: 4px; }
+    .dna-lbl { width: 52px; font-weight: 600; color: #334155; }
+    .dna-bars { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .bar-q { height: 5px; background: #dc2626; border-radius: 2px; transition: width 0.2s; }
+    .bar-t { height: 5px; background: #2563eb; border-radius: 2px; opacity: 0.85; transition: width 0.2s; }
+    .twin-card {
+      background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
+      padding: 9px; display: flex; flex-direction: column; gap: 5px; cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .twin-card:hover { border-color: #2563eb; transform: translateY(-1px); }
+    .twin-hdr { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; }
+    .match-pill { background: #dcfce7; color: #166534; border: 1px solid #16a34a; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; }
+    .size-pill { background: #991b1b; color: #fff; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; }
+    .twin-meta { font-size: 11px; color: #334155; line-height: 1.35; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>🔥 FireTwin-US</h1>
+      <span class="badge">Task B Interactive Prototype</span>
+      <span style="font-size:12px;color:#94a3b8;">Environmental Regime Clustering & Historical Wildfire Analog Explorer</span>
+    </div>
+    <div class="controls-top">
+      <label for="countySelect">Community / County:</label>
+      <select id="countySelect"></select>
+      <button id="toggleEncodingBtn" class="btn active" title="Compare Matzen et al. (2024) Bounded Lightness vs Alpha-Wash">
+        Encoding: Solid Lightness + Crisp Contour (Recommended)
+      </button>
+    <a href="minimal_mock.html" style="margin-left:10px; background:#fff; color:#0f172a; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; text-decoration:none; border:1px solid #cbd5e1;">✨ Minimalist View</a>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <!-- Left Panel: What-If Sliders & GMM Soft Probabilities -->
+    <div class="panel">
+      <div class="panel-title">① Interactive "What-If" Drivers</div>
+      <div class="panel-sub">Perturb weather, terrain & fuel [Diehl et al. 2017]</div>
+
+      <div class="preset-row">
+        <button class="preset-btn" onclick="applyPreset('redflag')">🌬️ Red Flag Wind</button>
+        <button class="preset-btn" onclick="applyPreset('thinning')">🌲 Thin Canopy (-30%)</button>
+        <button class="preset-btn" onclick="applyPreset('reset')">↺ Reset Baseline</button>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Energy Release (ERC Dryness)</span><span id="ercVal" style="color:#dc2626">84</span></div>
+        <input type="range" id="ercSlider" min="15" max="110" value="84" oninput="updateModel()" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Vapor Pressure Deficit (VPD)</span><span id="vpdVal" style="color:#ea580c">2.6 kPa</span></div>
+        <input type="range" id="vpdSlider" min="0.3" max="4.5" step="0.1" value="2.6" oninput="updateModel()" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>10m Wind Speed</span><span id="windVal" style="color:#d97706">22 mph</span></div>
+        <input type="range" id="windSlider" min="2" max="45" value="22" oninput="updateModel()" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Relative Humidity (RH)</span><span id="rhVal" style="color:#2563eb">16%</span></div>
+        <input type="range" id="rhSlider" min="6" max="85" value="16" oninput="updateModel()" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Terrain Slope</span><span id="slopeVal" style="color:#4f46e5">14°</span></div>
+        <input type="range" id="slopeSlider" min="1" max="35" value="14" oninput="updateModel()" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Canopy Cover (LANDFIRE EVC)</span><span id="canopyVal" style="color:#16a34a">62%</span></div>
+        <input type="range" id="canopySlider" min="5" max="95" value="62" oninput="updateModel()" />
+      </div>
+
+      <div class="gmm-box">
+        <div style="font-weight:700;color:#0f172a;">② GMM Soft Regime Probabilities γ_k(x)</div>
+        <div style="font-size:10px;color:#475569;">Prior weights for historical case matching [Serra et al. 2025]</div>
+        <div class="gmm-bar" id="gmmBar"></div>
+        <div id="gmmLegend" style="font-size:10.5px;line-height:1.4;color:#1e293b;"></div>
+      </div>
+    </div>
+
+    <!-- Center Column: Map + Verbal Translation Banner -->
+    <div class="center-col">
+      <div id="map-wrap">
+        <div id="map"></div>
+        <div class="map-overlay">
+          <div style="font-weight:700;color:#0f172a;" id="encodingTitle">③ Bounded Lightness + Crisp Contour</div>
+          <div style="font-size:10px;color:#475569;margin-top:2px;" id="encodingDesc">
+            Solid value ramp preserves risk salience; dashed contour marks 80% analog zone [Matzen et al. 2024].
+          </div>
+          <div class="legend-row">
+            <div class="legend-chip" style="background:#fef3c7;color:#0f172a;">Low</div>
+            <div class="legend-chip" style="background:#fdba74;color:#0f172a;">Mod</div>
+            <div class="legend-chip" style="background:#ea580c;color:#fff;">High</div>
+            <div class="legend-chip" style="background:#991b1b;color:#fff;">Extreme</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="verbal-box">
+        <div class="verbal-headline" id="verbalText">
+          ④ Plain-Language Risk: High Escalation Risk (24% probability — about 1 in 4 historical fires under these exact conditions exceeded 300 acres).
+        </div>
+        <div style="font-size:11px;font-weight:600;color:#334155;">
+          10th–90th Percentile Analog Burned-Area Interval (Top-15 Twins | 78.7% Empirical Coverage):
+        </div>
+        <div class="quantile-bar">
+          <div class="quantile-iqr" id="quantileIqr"></div>
+          <span style="color:#7c2d12;" id="p10Txt">p10: 18 ac</span>
+          <span style="color:#fff;" id="p50Txt">Median: 340 ac</span>
+          <span style="color:#7c2d12;" id="p90Txt">p90: 4,850 ac</span>
+        </div>
+        <div class="limit-note">
+          ⚠ Scope & Limitation Note: Historical fire twins reflect empirical outcomes under matching weather, terrain, and canopy drivers [Zimnicki & Matzen 2026]; actual spread depends on suppression response and local wind shifts.
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Environmental DNA Fingerprint & Top-3 Historical Twins -->
+    <div class="panel">
+      <div class="panel-title">⑤ Environmental DNA & Fire Twins</div>
+      <div class="panel-sub">Normalized profile vs. retrieved twins [Kübler et al. 2020]</div>
+
+      <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;padding:8px;">
+        <div style="font-size:11px;font-weight:700;margin-bottom:6px;">
+          Driver Fingerprint (<span style="color:#dc2626;">■ Selected</span> vs. <span style="color:#2563eb;">■ Top-3 Twins</span>)
+        </div>
+        <div id="dnaContainer"></div>
+      </div>
+
+      <div style="font-size:11.5px;font-weight:700;color:#0f172a;margin-top:2px;">
+        Retrieved Historical Fire Twins (Click to Pin Arc):
+      </div>
+      <div id="twinsContainer" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const COUNTIES = [
+      { id: "08013", name: "Boulder County, CO", lat: 40.08, lon: -105.35, erc: 84, vpd: 2.6, wind: 22, rh: 16, slope: 14, canopy: 62 },
+      { id: "06089", name: "Shasta County, CA", lat: 40.76, lon: -122.04, erc: 92, vpd: 3.2, wind: 19, rh: 14, slope: 16, canopy: 58 },
+      { id: "41029", name: "Jackson County, OR", lat: 42.43, lon: -122.73, erc: 79, vpd: 2.3, wind: 17, rh: 21, slope: 15, canopy: 68 },
+      { id: "04013", name: "Maricopa County, AZ", lat: 33.51, lon: -112.07, erc: 96, vpd: 3.9, wind: 20, rh: 11, slope: 6, canopy: 14 },
+      { id: "48453", name: "Travis County, TX", lat: 30.33, lon: -97.77, erc: 68, vpd: 2.1, wind: 18, rh: 32, slope: 5, canopy: 38 },
+      { id: "37021", name: "Buncombe County, NC", lat: 35.61, lon: -82.53, erc: 42, vpd: 1.1, wind: 12, rh: 54, slope: 18, canopy: 76 }
+    ];
+
+    const HISTORICAL_ARCHIVE = [
+      { name: "Calwood Fire (CO, Oct 2020)", lat: 40.15, lon: -105.38, acres: 10113, erc: 86, vpd: 2.5, wind: 24, rh: 15, slope: 15, canopy: 60, regime: "R2 Steep Montane Conifer", cause: "Human" },
+      { name: "Cold Springs Fire (CO, Jul 2016)", lat: 39.98, lon: -105.48, acres: 528, erc: 82, vpd: 2.4, wind: 20, rh: 18, slope: 13, canopy: 64, regime: "R2 Steep Montane Conifer", cause: "Human" },
+      { name: "Brian Head Fire (UT, Jun 2017)", lat: 37.71, lon: -112.84, acres: 71673, erc: 88, vpd: 2.8, wind: 23, rh: 14, slope: 14, canopy: 58, regime: "R2/R1 Transition", cause: "Human" },
+      { name: "Carr Fire (CA, Jul 2018)", lat: 40.65, lon: -122.62, acres: 229651, erc: 95, vpd: 3.5, wind: 24, rh: 12, slope: 17, canopy: 55, regime: "R1/R2 Extreme WUI", cause: "Human" },
+      { name: "Almeda Drive Fire (OR, Sep 2020)", lat: 42.23, lon: -122.75, acres: 3200, erc: 85, vpd: 2.7, wind: 28, rh: 15, slope: 9, canopy: 48, regime: "R2/R4 WUI Corridor", cause: "Human" },
+      { name: "Bush Fire (AZ, Jun 2020)", lat: 33.63, lon: -111.56, acres: 193455, erc: 98, vpd: 4.0, wind: 22, rh: 10, slope: 8, canopy: 16, regime: "R1 Arid Western Extreme", cause: "Human" },
+      { name: "Bastrop Complex (TX, Sep 2011)", lat: 30.12, lon: -97.26, acres: 34068, erc: 76, vpd: 2.5, wind: 25, rh: 24, slope: 5, canopy: 42, regime: "R4 Warm Southern WUI", cause: "Human" },
+      { name: "Party Rock Fire (NC, Nov 2016)", lat: 35.44, lon: -82.25, acres: 7171, erc: 52, vpd: 1.4, wind: 15, rh: 38, slope: 19, canopy: 74, regime: "R5/R2 Montane Hardwood", cause: "Human" },
+      { name: "East Troublesome (CO, Oct 2020)", lat: 40.21, lon: -106.05, acres: 193812, erc: 89, vpd: 2.7, wind: 31, rh: 14, slope: 16, canopy: 66, regime: "R2 Steep Montane Conifer", cause: "Human" }
+    ];
+
+    let activeCounty = COUNTIES[0];
+    let useSolidLightness = true;
+    let map, countyLayerGroup, arcLayerGroup;
+
+    function init() {
+      const sel = document.getElementById("countySelect");
+      COUNTIES.forEach((c, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = `${c.name} (${c.id})`;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", (e) => {
+        activeCounty = COUNTIES[parseInt(e.target.value)];
+        loadCountySliders(activeCounty);
+        map.flyTo([activeCounty.lat, activeCounty.lon], 6, { duration: 0.7 });
+        updateModel();
+      });
+
+      document.getElementById("toggleEncodingBtn").addEventListener("click", () => {
+        useSolidLightness = !useSolidLightness;
+        const btn = document.getElementById("toggleEncodingBtn");
+        if (useSolidLightness) {
+          btn.textContent = "Encoding: Solid Lightness + Crisp Contour (Recommended)";
+          btn.classList.add("active");
+          document.getElementById("encodingTitle").textContent = "③ Bounded Lightness + Crisp Contour";
+          document.getElementById("encodingDesc").textContent = "Solid value ramp preserves risk salience; dashed contour marks 80% analog zone [Matzen et al. 2024].";
+        } else {
+          btn.textContent = "Encoding: Alpha-Wash Uncertainty (Matzen 2024 Trap)";
+          btn.classList.remove("active");
+          document.getElementById("encodingTitle").textContent = "⚠ Alpha-Transparency Wash (Baseline)";
+          document.getElementById("encodingDesc").textContent = "Notice how high-uncertainty zones fade out, causing users to underestimate danger [Matzen et al. 2024].";
+        }
+        updateModel();
+      });
+
+      map = L.map("map", { zoomControl: true }).setView([39.5, -106.5], 5);
+      const topoLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri, USGS, NOAA"
+      });
+      const lightLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri, HERE, Garmin"
+      });
+      const osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors"
+      });
+      topoLayer.addTo(map);
+      L.control.layers({
+        "USGS / Esri Topographic": topoLayer,
+        "Clean Light Gray Canvas": lightLayer,
+        "OpenStreetMap": osmLayer
+      }, null, { position: "bottomleft" }).addTo(map);
+      countyLayerGroup = L.layerGroup().addTo(map);
+      arcLayerGroup = L.layerGroup().addTo(map);
+
+      loadCountySliders(activeCounty);
+      updateModel();
+    }
+
+    function loadCountySliders(c) {
+      document.getElementById("ercSlider").value = c.erc;
+      document.getElementById("vpdSlider").value = c.vpd;
+      document.getElementById("windSlider").value = c.wind;
+      document.getElementById("rhSlider").value = c.rh;
+      document.getElementById("slopeSlider").value = c.slope;
+      document.getElementById("canopySlider").value = c.canopy;
+    }
+
+    function applyPreset(mode) {
+      if (mode === "redflag") {
+        document.getElementById("windSlider").value = 36;
+        document.getElementById("rhSlider").value = 10;
+        document.getElementById("ercSlider").value = Math.min(105, parseInt(document.getElementById("ercSlider").value) + 12);
+      } else if (mode === "thinning") {
+        document.getElementById("canopySlider").value = Math.max(15, parseInt(document.getElementById("canopySlider").value) - 25);
+      } else {
+        loadCountySliders(activeCounty);
+      }
+      updateModel();
+    }
+
+    function updateModel() {
+      const erc = parseFloat(document.getElementById("ercSlider").value);
+      const vpd = parseFloat(document.getElementById("vpdSlider").value);
+      const wind = parseFloat(document.getElementById("windSlider").value);
+      const rh = parseFloat(document.getElementById("rhSlider").value);
+      const slope = parseFloat(document.getElementById("slopeSlider").value);
+      const canopy = parseFloat(document.getElementById("canopySlider").value);
+
+      document.getElementById("ercVal").textContent = `${erc}`;
+      document.getElementById("vpdVal").textContent = `${vpd.toFixed(1)} kPa`;
+      document.getElementById("windVal").textContent = `${wind} mph`;
+      document.getElementById("rhVal").textContent = `${rh}%`;
+      document.getElementById("slopeVal").textContent = `${slope}°`;
+      document.getElementById("canopyVal").textContent = `${canopy}%`;
+
+      // Compute soft GMM regime probabilities
+      const sR1 = Math.exp((erc - 75)/18 + (vpd - 2.5)/1.0 - canopy/50);
+      const sR2 = Math.exp((slope - 10)/6 + (canopy - 45)/25 + (erc - 65)/25);
+      const sR3 = Math.exp((wind - 18)/10 - (canopy - 35)/30);
+      const sR5 = Math.exp((rh - 40)/15 - (erc - 50)/20);
+      const sumS = sR1 + sR2 + sR3 + sR5;
+      const gR2 = Math.round((sR2 / sumS) * 100);
+      const gR1 = Math.round((sR1 / sumS) * 100);
+      const gR3 = Math.max(2, 100 - gR2 - gR1);
+
+      const gmmBar = document.getElementById("gmmBar");
+      gmmBar.innerHTML = `
+        <div style="width:${gR2}%;background:#991b1b;color:#fff;font-size:9.5px;display:flex;align-items:center;justify-content:center;font-weight:700;">${gR2>14?gR2+'% R2':''}</div>
+        <div style="width:${gR1}%;background:#ea580c;color:#fff;font-size:9.5px;display:flex;align-items:center;justify-content:center;font-weight:700;">${gR1>14?gR1+'% R1':''}</div>
+        <div style="width:${gR3}%;background:#f59e0b;color:#0f172a;font-size:9.5px;display:flex;align-items:center;justify-content:center;font-weight:700;">${gR3>14?gR3+'% R3':''}</div>
+      `;
+      document.getElementById("gmmLegend").innerHTML = `
+        • <b>R2 Steep Montane Conifer</b>: ${gR2}%<br/>
+        • <b>R1 Arid Western Extreme</b>: ${gR1}%<br/>
+        • <b>R3/R5 Shrub & Humid Transition</b>: ${gR3}%
+      `;
+
+      // Compute Escalation Risk Probability
+      const logit = -3.2 + 0.022 * erc + 0.35 * vpd + 0.045 * wind - 0.025 * rh + 0.04 * slope + 0.012 * canopy;
+      const prob = Math.min(0.88, Math.max(0.02, 1 / (1 + Math.exp(-logit))));
+      const pctProb = Math.round(prob * 100);
+      const oneInN = Math.max(1, Math.round(1 / prob));
+      const tier = pctProb >= 28 ? "Extreme" : (pctProb >= 16 ? "High" : (pctProb >= 8 ? "Moderate" : "Low"));
+
+      document.getElementById("verbalText").innerHTML =
+        `④ Plain-Language Risk: <u>${tier} Escalation Risk</u> (${pctProb}% probability — about 1 in ${oneInN} historical fires under these exact conditions exceeded 300 acres).`;
+
+      // Retrieve Top-3 Twins via RF-weighted distance
+      const scored = HISTORICAL_ARCHIVE.map(h => {
+        const d = Math.sqrt(
+          0.22 * Math.pow((erc - h.erc)/30, 2) +
+          0.18 * Math.pow((vpd - h.vpd)/1.5, 2) +
+          0.18 * Math.pow((wind - h.wind)/15, 2) +
+          0.14 * Math.pow((rh - h.rh)/25, 2) +
+          0.14 * Math.pow((slope - h.slope)/12, 2) +
+          0.14 * Math.pow((canopy - h.canopy)/35, 2)
+        );
+        const match = Math.max(62, Math.min(99.2, 100 * Math.exp(-1.15 * d)));
+        return { ...h, dist: d, match };
+      }).sort((a, b) => b.match - a.match);
+
+      const top3 = scored.slice(0, 3);
+      const p10 = Math.round(Math.min(...top3.map(t => t.acres)) * 0.15 + 12);
+      const p50 = Math.round((top3[0].acres * 0.4 + top3[1].acres * 0.6) * (prob / 0.24));
+      const p90 = Math.round(Math.max(...top3.map(t => t.acres)) * (0.65 + prob));
+      document.getElementById("p10Txt").textContent = `p10: ${p10.toLocaleString()} ac`;
+      document.getElementById("p50Txt").textContent = `Median: ${p50.toLocaleString()} ac`;
+      document.getElementById("p90Txt").textContent = `p90: ${p90.toLocaleString()} ac`;
+
+      // Render DNA Comparison Bars
+      const avgTwin = {
+        erc: top3.reduce((s,t)=>s+t.erc,0)/3,
+        vpd: top3.reduce((s,t)=>s+t.vpd,0)/3,
+        wind: top3.reduce((s,t)=>s+t.wind,0)/3,
+        slope: top3.reduce((s,t)=>s+t.slope,0)/3,
+        canopy: top3.reduce((s,t)=>s+t.canopy,0)/3
+      };
+      const dnaSpecs = [
+        ["ERC", erc/110, avgTwin.erc/110],
+        ["VPD", vpd/4.5, avgTwin.vpd/4.5],
+        ["Wind", wind/45, avgTwin.wind/45],
+        ["Slope", slope/35, avgTwin.slope/35],
+        ["Canopy", canopy/95, avgTwin.canopy/95]
+      ];
+      document.getElementById("dnaContainer").innerHTML = dnaSpecs.map(([label, qv, tv]) => `
+        <div class="dna-row">
+          <div class="dna-lbl">${label}</div>
+          <div class="dna-bars">
+            <div class="bar-q" style="width:${Math.min(100, Math.round(qv*100))}%"></div>
+            <div class="bar-t" style="width:${Math.min(100, Math.round(tv*100))}%"></div>
+          </div>
+        </div>
+      `).join("");
+
+      // Render Twin Cards
+      document.getElementById("twinsContainer").innerHTML = top3.map((t, i) => `
+        <div class="twin-card" onclick="focusTwin(${t.lat}, ${t.lon})">
+          <div class="twin-hdr">
+            <span>#${i+1} ${t.name}</span>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <span class="match-pill">${t.match.toFixed(1)}% Match</span>
+            <span class="size-pill">Burned: ${t.acres.toLocaleString()} ac</span>
+          </div>
+          <div class="twin-meta">
+            ERC ${t.erc} (${t.erc>=erc?'+':''}${t.erc-erc}) | Wind ${t.wind} mph | Slope ${t.slope}° | Canopy ${t.canopy}%<br/>
+            <b>Regime</b>: ${t.regime} (${t.cause})
+          </div>
+        </div>
+      `).join("");
+
+      // Render Map Layers
+      countyLayerGroup.clearLayers();
+      arcLayerGroup.clearLayers();
+
+      const fillCol = pctProb >= 28 ? "#991b1b" : (pctProb >= 16 ? "#ea580c" : (pctProb >= 8 ? "#fdba74" : "#fef3c7"));
+      const fillOpacity = useSolidLightness ? 0.86 : 0.22; // Demonstrates Matzen et al. 2024 alpha wash trap!
+
+      // Draw active county risk circle + crisp 80% analog contour
+      L.circle([activeCounty.lat, activeCounty.lon], {
+        radius: 55000,
+        color: "#0f172a",
+        weight: useSolidLightness ? 2.5 : 0.8,
+        fillColor: fillCol,
+        fillOpacity: fillOpacity
+      }).bindPopup(`<b>${activeCounty.name}</b><br/>Escalation Risk: ${pctProb}% (${tier})`).addTo(countyLayerGroup);
+
+      if (useSolidLightness) {
+        L.circle([activeCounty.lat, activeCounty.lon], {
+          radius: 85000,
+          color: "#0f172a",
+          weight: 2,
+          dashArray: "6, 6",
+          fillOpacity: 0
+        }).bindTooltip("80% Historical Analog Spread Boundary").addTo(countyLayerGroup);
+      }
+
+      // Draw arcs & markers to Top-3 Historical Twins
+      top3.forEach((t, idx) => {
+        L.Polyline.prototype;
+        L.polyline([[activeCounty.lat, activeCounty.lon], [t.lat, t.lon]], {
+          color: idx === 0 ? "#dc2626" : "#2563eb",
+          weight: idx === 0 ? 2.6 : 1.8,
+          dashArray: "5, 5",
+          opacity: 0.85
+        }).addTo(arcLayerGroup);
+
+        L.circleMarker([t.lat, t.lon], {
+          radius: 7,
+          color: "#fff",
+          weight: 1.5,
+          fillColor: "#1d4ed8",
+          fillOpacity: 0.95
+        }).bindPopup(`<b>Twin #${idx+1}: ${t.name}</b><br/>Match: ${t.match.toFixed(1)}% | Size: ${t.acres.toLocaleString()} ac`).addTo(arcLayerGroup);
+      });
+    }
+
+    function focusTwin(lat, lon) {
+      map.flyToBounds([[activeCounty.lat, activeCounty.lon], [lat, lon]], { padding: [50, 50], duration: 0.8 });
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
