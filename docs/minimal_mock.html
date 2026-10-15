@@ -111,7 +111,9 @@
     </div>
     <div class="controls-top">
       <select id="countySelect">
-        <option>Boulder County, CO</option>
+        <option>Butte County, CA (Northern CA Pilot)</option>
+        <option>Sonoma County, CA (North Bay WUI)</option>
+        <option>Shasta County, CA (Northern Valley)</option>
       </select>
       <div class="seg-control">
         <button class="seg-btn active">Soft GMM Mixture + Bounded Lightness</button>
@@ -127,28 +129,28 @@
       <div class="panel-title"><span class="badge-num">1</span> "What-If" Drivers</div>
       
       <div class="slider-group">
-        <div class="slider-hdr"><span>ERC Dryness</span><span>84</span></div>
-        <input type="range" value="84" min="0" max="100" />
+        <div class="slider-hdr"><span>ERC Dryness</span><span>88</span></div>
+        <input type="range" value="88" min="0" max="100" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>VPD</span><span>2.6 kPa</span></div>
-        <input type="range" value="2.6" min="0" max="5" step="0.1" />
+        <div class="slider-hdr"><span>VPD</span><span>2.9 kPa</span></div>
+        <input type="range" value="2.9" min="0" max="5" step="0.1" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Wind Speed</span><span>22 mph</span></div>
-        <input type="range" value="22" min="0" max="50" />
+        <div class="slider-hdr"><span>Wind Speed</span><span>28 mph</span></div>
+        <input type="range" value="28" min="0" max="50" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Relative Humidity</span><span>16%</span></div>
-        <input type="range" value="16" min="0" max="100" />
+        <div class="slider-hdr"><span>Relative Humidity</span><span>14%</span></div>
+        <input type="range" value="14" min="0" max="100" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Slope</span><span>14°</span></div>
-        <input type="range" value="14" min="0" max="45" />
+        <div class="slider-hdr"><span>Slope</span><span>18°</span></div>
+        <input type="range" value="18" min="0" max="45" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Canopy Cover</span><span>62%</span></div>
-        <input type="range" value="62" min="0" max="100" />
+        <div class="slider-hdr"><span>Canopy Cover</span><span>58%</span></div>
+        <input type="range" value="58" min="0" max="100" />
       </div>
 
       <div class="gmm-box">
@@ -158,7 +160,7 @@
           <div class="gmm-seg" style="width:24%; background:#9CA3AF;">24% R1</div>
           <div class="gmm-seg" style="width:8%; background:#D1D5DB; color:#374151;">8% R3</div>
         </div>
-        <div style="font-size:10px; color:var(--muted); margin-top:8px; text-align:center;">68% R2 Montane &middot; 24% R1 Arid &middot; 8% R3 Shrub</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:8px; text-align:center;">68% R2 Foothill WUI &middot; 24% R1 Conifer &middot; 8% R3 Chaparral</div>
       </div>
     </div>
 
@@ -177,7 +179,7 @@
             <div style="flex:1; height:12px; background:#4B5563; border-radius:2px;"></div>
           </div>
           <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:4px;">
-            <span>Low</span><span>High</span>
+            <span>1.0× Norm</span><span>4.0×+ High</span>
           </div>
         </div>
       </div>
@@ -185,13 +187,13 @@
       <div class="callout-card">
         <div class="callout-text">
           <span class="badge-num">4</span>
-          Daily Ignition Risk P(Fire|x) = 24% (Soft Mixture across C₁..Cₖ) — Historical Outcome Range:
+          Daily Ignition Risk P(Fire|x) = 3.8× Seasonal Normal (High Tier) — Historical Outcome Range:
         </div>
         <div class="range-bar-wrap">
           <div class="range-labels">
-            <span>p10: 18 ac</span>
-            <span style="color:var(--ink); font-weight:600;">Median: 340 ac</span>
-            <span>p90: 4,850 ac</span>
+            <span>p10: 24 ac (2d)</span>
+            <span style="color:var(--ink); font-weight:600;">Median: 410 ac (6d)</span>
+            <span>p90: 6,200 ac (18d)</span>
           </div>
           <div class="range-bar">
             <div class="range-iqr"></div>
@@ -208,31 +210,31 @@
     <div class="panel">
       <div>
         <div class="panel-title" style="margin-bottom:12px;"><span class="badge-num">5</span> Environmental DNA</div>
-        <div class="dna-row"><div class="dna-lbl">ERC</div><div class="dna-bars"><div class="bar-q" style="width:80%"></div><div class="bar-t" style="width:75%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">VPD</div><div class="dna-bars"><div class="bar-q" style="width:60%"></div><div class="bar-t" style="width:65%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">Wind</div><div class="dna-bars"><div class="bar-q" style="width:50%"></div><div class="bar-t" style="width:45%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">Slope</div><div class="dna-bars"><div class="bar-q" style="width:40%"></div><div class="bar-t" style="width:40%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">Canopy</div><div class="dna-bars"><div class="bar-q" style="width:65%"></div><div class="bar-t" style="width:60%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">ERC</div><div class="dna-bars"><div class="bar-q" style="width:85%"></div><div class="bar-t" style="width:80%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">VPD</div><div class="dna-bars"><div class="bar-q" style="width:72%"></div><div class="bar-t" style="width:70%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">Wind</div><div class="dna-bars"><div class="bar-q" style="width:65%"></div><div class="bar-t" style="width:62%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">Slope</div><div class="dna-bars"><div class="bar-q" style="width:45%"></div><div class="bar-t" style="width:42%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">Canopy</div><div class="dna-bars"><div class="bar-q" style="width:58%"></div><div class="bar-t" style="width:55%"></div></div></div>
       </div>
 
-      <div style="font-size:12px; font-weight:600; color:var(--ink); margin-top:8px;">Historical Fire Twins</div>
+      <div style="font-size:12px; font-weight:600; color:var(--ink); margin-top:8px;">Historical Fire Twins (Northern CA)</div>
       <div style="display:flex; flex-direction:column; gap:12px;">
         <div class="twin-card">
-          <div class="twin-hdr"><span>#1 Calwood Fire</span></div>
-          <div style="display:flex; gap:6px;">
-            <span class="pill">98.2% Match</span><span class="pill">10,113 ac</span>
+          <div class="twin-hdr"><span>#1 Camp Fire (Butte, CA)</span></div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <span class="pill">96.4% Match</span><span class="pill">153,336 ac</span><span class="pill">17 days</span>
           </div>
         </div>
         <div class="twin-card">
-          <div class="twin-hdr"><span>#2 Cold Springs Fire</span></div>
-          <div style="display:flex; gap:6px;">
-            <span class="pill">94.5% Match</span><span class="pill">528 ac</span>
+          <div class="twin-hdr"><span>#2 Tubbs Fire (Sonoma, CA)</span></div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <span class="pill">92.8% Match</span><span class="pill">36,807 ac</span><span class="pill">23 days</span>
           </div>
         </div>
         <div class="twin-card">
-          <div class="twin-hdr"><span>#3 Brian Head Fire</span></div>
-          <div style="display:flex; gap:6px;">
-            <span class="pill">89.1% Match</span><span class="pill">71,673 ac</span>
+          <div class="twin-hdr"><span>#3 Carr Fire (Shasta, CA)</span></div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <span class="pill">89.5% Match</span><span class="pill">229,651 ac</span><span class="pill">38 days</span>
           </div>
         </div>
       </div>
@@ -240,27 +242,27 @@
   </div>
 
   <script>
-    const map = L.map('map', { zoomControl: false }).setView([40.08, -105.35], 9);
+    const map = L.map('map', { zoomControl: false }).setView([39.76, -121.62], 9);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 16,
     }).addTo(map);
 
-    // Add Solid Lightness circle
-    L.circle([40.08, -105.35], {
+    // Add Solid Lightness circle (Butte County / Paradise-Chico WUI)
+    L.circle([39.76, -121.62], {
       color: '#4B5563',
       weight: 0,
       fillColor: '#4B5563',
       fillOpacity: 0.8,
-      radius: 20000
+      radius: 18000
     }).addTo(map);
 
     // Add Dashed Contour
-    L.circle([40.08, -105.35], {
+    L.circle([39.76, -121.62], {
       color: '#111827',
       weight: 1.5,
       dashArray: '4, 4',
       fillOpacity: 0,
-      radius: 35000
+      radius: 32000
     }).addTo(map);
   </script>
 </body>
