@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FireTwin-US | Minimalist Mock View</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --bg: #FAFAFA;
+      --card: #FFFFFF;
+      --ink: #111827;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--ink); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    
+    header {
+      background: var(--card); color: var(--ink); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 { font-size: 14px; font-weight: 600; }
+    .badge { background: #F3F4F6; color: var(--ink); font-size: 11px; padding: 4px 10px; border-radius: 999px; font-weight: 500; border: 1px solid var(--border); }
+    
+    .controls-top { display: flex; align-items: center; gap: 12px; }
+    select {
+      background: var(--card); color: var(--ink); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; outline: none;
+    }
+    .seg-control { display: flex; background: #F3F4F6; padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
+    .seg-btn { padding: 6px 14px; font-size: 12px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--muted); }
+    .seg-btn.active { background: #FFFFFF; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    
+    .main-grid {
+      display: grid; grid-template-columns: 260px 1fr 300px;
+      gap: 16px; padding: 16px 24px; flex: 1; min-height: 0;
+    }
+    
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; display: flex; flex-direction: column;
+      gap: 16px; overflow-y: auto; box-shadow: var(--shadow);
+    }
+    .panel-title { font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+    .badge-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #111827; color: #fff; font-size: 10px; border-radius: 50%; font-weight: 700; flex-shrink: 0; }
+    
+    .slider-group { display: flex; flex-direction: column; gap: 8px; }
+    .slider-hdr { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+    .slider-hdr span:last-child { font-weight: 600; color: var(--ink); }
+    input[type=range] { width: 100%; accent-color: var(--ink); cursor: pointer; height: 2px; background: var(--border); -webkit-appearance: none; border-radius: 2px; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); cursor: pointer; }
+    
+    .gmm-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .gmm-pill-bar { display: flex; height: 16px; border-radius: 8px; overflow: hidden; margin-top: 8px; gap: 2px; }
+    .gmm-seg { display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; }
+    
+    .center-col { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+    #map-wrap { flex: 1; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: #f0f0f0; }
+    #map { width: 100%; height: 100%; }
+    
+    .map-overlay {
+      position: absolute; top: 12px; right: 12px; z-index: 900;
+      background: rgba(255,255,255,0.95); border: 1px solid var(--border);
+      padding: 12px; border-radius: 8px; font-size: 12px; width: 200px;
+      box-shadow: var(--shadow); backdrop-filter: blur(4px);
+    }
+    
+    .callout-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow);
+    }
+    .callout-text { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.5; display: flex; gap: 8px; }
+    .range-bar-wrap { padding: 0 8px; }
+    .range-bar {
+      position: relative; height: 4px; background: var(--border);
+      border-radius: 2px; margin: 8px 0;
+    }
+    .range-iqr {
+      position: absolute; left: 10%; width: 60%; top: 0; bottom: 0;
+      background: var(--ink); border-radius: 2px;
+    }
+    .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-weight: 500; }
+    
+    .dna-row { display: flex; align-items: center; gap: 8px; font-size: 11px; margin-bottom: 8px; }
+    .dna-lbl { width: 50px; color: var(--muted); }
+    .dna-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .bar-q { height: 4px; background: var(--ink); border-radius: 2px; }
+    .bar-t { height: 4px; background: var(--border); border-radius: 2px; }
+    
+    .twin-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .twin-hdr { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
+    .pill { background: var(--card); border: 1px solid var(--border); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: var(--muted); font-weight: 500; }
+    
+    .leaflet-control-attribution { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>FireTwin-US</h1>
+      <span class="badge">Task B Mock</span>
+    </div>
+    <div class="controls-top">
+      <select id="countySelect">
+        <option>Boulder County, CO</option>
+      </select>
+      <div class="seg-control">
+        <button class="seg-btn active">Soft GMM Mixture + Bounded Lightness</button>
+        <button class="seg-btn">Hard Single-Cluster Baseline</button>
+      </div>
+      <a href="index.html" style="font-size: 12px; color: var(--muted); text-decoration: none; margin-left: 10px;">Back to Prototype</a>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <!-- Left Panel -->
+    <div class="panel">
+      <div class="panel-title"><span class="badge-num">1</span> "What-If" Drivers</div>
+      
+      <div class="slider-group">
+        <div class="slider-hdr"><span>ERC Dryness</span><span>84</span></div>
+        <input type="range" value="84" min="0" max="100" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>VPD</span><span>2.6 kPa</span></div>
+        <input type="range" value="2.6" min="0" max="5" step="0.1" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Wind Speed</span><span>22 mph</span></div>
+        <input type="range" value="22" min="0" max="50" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Relative Humidity</span><span>16%</span></div>
+        <input type="range" value="16" min="0" max="100" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Slope</span><span>14°</span></div>
+        <input type="range" value="14" min="0" max="45" />
+      </div>
+      <div class="slider-group">
+        <div class="slider-hdr"><span>Canopy Cover</span><span>62%</span></div>
+        <input type="range" value="62" min="0" max="100" />
+      </div>
+
+      <div class="gmm-box">
+        <div style="font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px;"><span class="badge-num">2</span> Soft Regime Mixture P(Cₖ|x)</div>
+        <div class="gmm-pill-bar">
+          <div class="gmm-seg" style="width:68%; background:#4B5563;">68% R2</div>
+          <div class="gmm-seg" style="width:24%; background:#9CA3AF;">24% R1</div>
+          <div class="gmm-seg" style="width:8%; background:#D1D5DB; color:#374151;">8% R3</div>
+        </div>
+        <div style="font-size:10px; color:var(--muted); margin-top:8px; text-align:center;">68% R2 Montane &middot; 24% R1 Arid &middot; 8% R3 Shrub</div>
+      </div>
+    </div>
+
+    <!-- Center Column -->
+    <div class="center-col">
+      <div id="map-wrap">
+        <div id="map"></div>
+        <div class="map-overlay">
+          <div style="font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px; margin-bottom: 8px;">
+            <span class="badge-num">3</span> Bounded Lightness
+          </div>
+          <div style="display:flex; gap:4px;">
+            <div style="flex:1; height:12px; background:#F3F4F6; border-radius:2px;"></div>
+            <div style="flex:1; height:12px; background:#D1D5DB; border-radius:2px;"></div>
+            <div style="flex:1; height:12px; background:#9CA3AF; border-radius:2px;"></div>
+            <div style="flex:1; height:12px; background:#4B5563; border-radius:2px;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:4px;">
+            <span>Low</span><span>High</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout-card">
+        <div class="callout-text">
+          <span class="badge-num">4</span>
+          Daily Ignition Risk P(Fire|x) = 24% (Soft Mixture across C₁..Cₖ) — Historical Outcome Range:
+        </div>
+        <div class="range-bar-wrap">
+          <div class="range-labels">
+            <span>p10: 18 ac</span>
+            <span style="color:var(--ink); font-weight:600;">Median: 340 ac</span>
+            <span>p90: 4,850 ac</span>
+          </div>
+          <div class="range-bar">
+            <div class="range-iqr"></div>
+            <!-- markers -->
+            <div style="position:absolute; left:10%; top:-4px; width:2px; height:12px; background:var(--ink);"></div>
+            <div style="position:absolute; left:35%; top:-4px; width:2px; height:12px; background:var(--ink);"></div>
+            <div style="position:absolute; left:70%; top:-4px; width:2px; height:12px; background:var(--ink);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="panel">
+      <div>
+        <div class="panel-title" style="margin-bottom:12px;"><span class="badge-num">5</span> Environmental DNA</div>
+        <div class="dna-row"><div class="dna-lbl">ERC</div><div class="dna-bars"><div class="bar-q" style="width:80%"></div><div class="bar-t" style="width:75%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">VPD</div><div class="dna-bars"><div class="bar-q" style="width:60%"></div><div class="bar-t" style="width:65%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">Wind</div><div class="dna-bars"><div class="bar-q" style="width:50%"></div><div class="bar-t" style="width:45%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">Slope</div><div class="dna-bars"><div class="bar-q" style="width:40%"></div><div class="bar-t" style="width:40%"></div></div></div>
+        <div class="dna-row"><div class="dna-lbl">Canopy</div><div class="dna-bars"><div class="bar-q" style="width:65%"></div><div class="bar-t" style="width:60%"></div></div></div>
+      </div>
+
+      <div style="font-size:12px; font-weight:600; color:var(--ink); margin-top:8px;">Historical Fire Twins</div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="twin-card">
+          <div class="twin-hdr"><span>#1 Calwood Fire</span></div>
+          <div style="display:flex; gap:6px;">
+            <span class="pill">98.2% Match</span><span class="pill">10,113 ac</span>
+          </div>
+        </div>
+        <div class="twin-card">
+          <div class="twin-hdr"><span>#2 Cold Springs Fire</span></div>
+          <div style="display:flex; gap:6px;">
+            <span class="pill">94.5% Match</span><span class="pill">528 ac</span>
+          </div>
+        </div>
+        <div class="twin-card">
+          <div class="twin-hdr"><span>#3 Brian Head Fire</span></div>
+          <div style="display:flex; gap:6px;">
+            <span class="pill">89.1% Match</span><span class="pill">71,673 ac</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const map = L.map('map', { zoomControl: false }).setView([40.08, -105.35], 9);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16,
+    }).addTo(map);
+
+    // Add Solid Lightness circle
+    L.circle([40.08, -105.35], {
+      color: '#4B5563',
+      weight: 0,
+      fillColor: '#4B5563',
+      fillOpacity: 0.8,
+      radius: 20000
+    }).addTo(map);
+
+    // Add Dashed Contour
+    L.circle([40.08, -105.35], {
+      color: '#111827',
+      weight: 1.5,
+      dashArray: '4, 4',
+      fillOpacity: 0,
+      radius: 35000
+    }).addTo(map);
+  </script>
+</body>
+</html>
