@@ -3,141 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FireTwin-US | Minimalist Mock View</title>
+  <title>US Wildfire Risk Map | Northern California Pilot</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     :root {
-      --bg: #FAFAFA;
+      --bg: #F8FAFC;
       --card: #FFFFFF;
-      --ink: #111827;
-      --muted: #6B7280;
-      --border: #E5E7EB;
-      --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+      --ink: #0F172A;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --accent: #DC2626;
+      --accent-soft: #FEF2F2;
+      --amber: #D97706;
+      --orange: #EA580C;
+      --crimson: #B91C1C;
+      --blue: #2563EB;
+      --teal: #0D9488;
+      --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: var(--bg); color: var(--ink); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
     
     header {
-      background: var(--card); color: var(--ink); padding: 12px 24px;
+      background: var(--card); color: var(--ink); padding: 11px 24px;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand h1 { font-size: 14px; font-weight: 600; }
-    .badge { background: #F3F4F6; color: var(--ink); font-size: 11px; padding: 4px 10px; border-radius: 999px; font-weight: 500; border: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-dot { width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, #F59E0B, #DC2626); box-shadow: 0 0 0 3px #FEE2E2; }
+    .brand h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+    .badge { background: #FFF7ED; color: #C2410C; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600; border: 1px solid #FED7AA; }
     
     .controls-top { display: flex; align-items: center; gap: 12px; }
     select {
       background: var(--card); color: var(--ink); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; outline: none;
+      padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; outline: none;
     }
-    .seg-control { display: flex; background: #F3F4F6; padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
-    .seg-btn { padding: 6px 14px; font-size: 12px; font-weight: 500; border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--muted); }
-    .seg-btn.active { background: #FFFFFF; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .seg-control { display: flex; background: #F1F5F9; padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
+    .seg-btn { padding: 5px 12px; font-size: 11.5px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--muted); }
+    .seg-btn.active { background: #FFFFFF; color: #B91C1C; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
     
     .main-grid {
-      display: grid; grid-template-columns: 260px 1fr 300px;
-      gap: 16px; padding: 16px 24px; flex: 1; min-height: 0;
+      display: grid; grid-template-columns: 268px 1fr 316px;
+      gap: 14px; padding: 14px 20px; flex: 1; min-height: 0;
     }
     
     .panel {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 16px; display: flex; flex-direction: column;
-      gap: 16px; overflow-y: auto; box-shadow: var(--shadow);
+      border-radius: 12px; padding: 15px; display: flex; flex-direction: column;
+      gap: 14px; overflow-y: auto; box-shadow: var(--shadow);
     }
-    .panel-title { font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
-    .badge-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #111827; color: #fff; font-size: 10px; border-radius: 50%; font-weight: 700; flex-shrink: 0; }
+    .panel-title { font-size: 12.5px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em; }
+    .badge-num { display: inline-flex; align-items: center; justify-content: center; width: 19px; height: 19px; background: #B91C1C; color: #fff; font-size: 10.5px; border-radius: 50%; font-weight: 700; flex-shrink: 0; }
     
-    .slider-group { display: flex; flex-direction: column; gap: 8px; }
-    .slider-hdr { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+    .slider-group { display: flex; flex-direction: column; gap: 5px; }
+    .slider-hdr { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
     .slider-hdr span:last-child { font-weight: 600; color: var(--ink); }
-    input[type=range] { width: 100%; accent-color: var(--ink); cursor: pointer; height: 2px; background: var(--border); -webkit-appearance: none; border-radius: 2px; }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #FFFFFF; border: 1px solid var(--border); border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); cursor: pointer; }
+    input[type=range] { width: 100%; accent-color: #DC2626; cursor: pointer; height: 4px; background: #E2E8F0; -webkit-appearance: none; border-radius: 999px; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; background: #DC2626; border: 2px solid #FFFFFF; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.25); cursor: pointer; }
     
-    .gmm-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-    .gmm-pill-bar { display: flex; height: 16px; border-radius: 8px; overflow: hidden; margin-top: 8px; gap: 2px; }
-    .gmm-seg { display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; }
+    .gmm-box { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px; margin-top: auto; }
+    .gmm-pill-bar { display: flex; height: 18px; border-radius: 6px; overflow: hidden; margin-top: 8px; gap: 2px; }
+    .gmm-seg { display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700; color: #fff; }
+    .gmm-legend { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; font-size: 10.5px; color: #475569; }
+    .gmm-leg-item { display: flex; align-items: center; justify-content: space-between; }
+    .dot-sm { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
     
-    .center-col { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
-    #map-wrap { flex: 1; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: #f0f0f0; }
+    .center-col { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+    #map-wrap { flex: 1; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: #E2E8F0; }
     #map { width: 100%; height: 100%; }
     
     .map-overlay {
       position: absolute; top: 12px; right: 12px; z-index: 900;
-      background: rgba(255,255,255,0.95); border: 1px solid var(--border);
-      padding: 12px; border-radius: 8px; font-size: 12px; width: 200px;
-      box-shadow: var(--shadow); backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.96); border: 1px solid var(--border);
+      padding: 12px; border-radius: 10px; font-size: 11.5px; width: 235px;
+      box-shadow: 0 4px 12px rgba(15,23,42,0.08); backdrop-filter: blur(6px);
+    }
+    .map-region-tag {
+      position: absolute; top: 12px; left: 12px; z-index: 900;
+      background: rgba(15,23,42,0.88); color: #FFFFFF;
+      padding: 7px 12px; border-radius: 8px; font-size: 11px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     
     .callout-card {
       background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow);
+      padding: 13px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);
     }
-    .callout-text { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.5; display: flex; gap: 8px; }
-    .range-bar-wrap { padding: 0 8px; }
+    .callout-top { display: flex; align-items: center; justify-content: space-between; }
+    .callout-text { font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+    .risk-pill { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .range-bar-wrap { padding: 0 4px; }
     .range-bar {
-      position: relative; height: 4px; background: var(--border);
-      border-radius: 2px; margin: 8px 0;
+      position: relative; height: 7px; background: #F1F5F9;
+      border-radius: 999px; margin: 6px 0 2px 0; border: 1px solid #E2E8F0;
     }
     .range-iqr {
-      position: absolute; left: 10%; width: 60%; top: 0; bottom: 0;
-      background: var(--ink); border-radius: 2px;
+      position: absolute; left: 12%; width: 64%; top: 0; bottom: 0;
+      background: linear-gradient(90deg, #F59E0B 0%, #EA580C 50%, #B91C1C 100%); border-radius: 999px;
     }
     .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-weight: 500; }
     
-    .dna-row { display: flex; align-items: center; gap: 8px; font-size: 11px; margin-bottom: 8px; }
-    .dna-lbl { width: 50px; color: var(--muted); }
-    .dna-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-    .bar-q { height: 4px; background: var(--ink); border-radius: 2px; }
-    .bar-t { height: 4px; background: var(--border); border-radius: 2px; }
+    .dna-legend { display: flex; gap: 12px; font-size: 10.5px; color: var(--muted); margin-bottom: 8px; }
+    .dna-row { display: flex; align-items: center; gap: 8px; font-size: 11px; margin-bottom: 7px; }
+    .dna-lbl { width: 62px; color: #334155; font-weight: 500; }
+    .dna-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; background: #F8FAFC; padding: 3px 5px; border-radius: 4px; }
+    .bar-q { height: 5px; background: #DC2626; border-radius: 3px; }
+    .bar-t { height: 5px; background: #2563EB; border-radius: 3px; opacity: 0.85; }
+    .dna-val { width: 36px; text-align: right; font-size: 10.5px; font-weight: 600; color: var(--muted); }
     
     .twin-card {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-      padding: 12px; display: flex; flex-direction: column; gap: 8px;
+      background: #F8FAFC; border: 1px solid var(--border); border-left: 3.5px solid #DC2626; border-radius: 8px;
+      padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
     }
-    .twin-hdr { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
-    .pill { background: var(--card); border: 1px solid var(--border); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: var(--muted); font-weight: 500; }
+    .twin-card.rank2 { border-left-color: #EA580C; }
+    .twin-card.rank3 { border-left-color: #D97706; }
+    .twin-hdr { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--ink); }
+    .twin-sub { font-size: 10.5px; color: var(--muted); }
+    .pill { background: var(--card); border: 1px solid var(--border); padding: 2px 7px; border-radius: 5px; font-size: 10px; color: #334155; font-weight: 600; }
+    .pill.match { background: #FEF2F2; border-color: #FECACA; color: #B91C1C; }
     
     .leaflet-control-attribution { display: none !important; }
+    .fire-label {
+      background: rgba(15, 23, 42, 0.88); color: #fff; border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 600; white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .query-label {
+      background: #B91C1C; color: #fff; border: 1.5px solid #fff;
+      border-radius: 5px; padding: 2px 7px; font-size: 10.5px; font-weight: 700; white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(185,28,28,0.45);
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <h1>FireTwin-US</h1>
-      <span class="badge">Task B Mock</span>
+      <span class="brand-dot"></span>
+      <h1>US Wildfire Risk Map</h1>
+      <span class="badge">Northern California Pilot &middot; Task B Mock</span>
     </div>
     <div class="controls-top">
       <select id="countySelect">
-        <option>Butte County, CA (Northern CA Pilot)</option>
-        <option>Sonoma County, CA (North Bay WUI)</option>
-        <option>Shasta County, CA (Northern Valley)</option>
+        <option>Northern California Region ( focus: Butte County WUI )</option>
+        <option>Northern California Region ( focus: Sonoma / Napa WUI )</option>
+        <option>Northern California Region ( focus: Shasta / Trinity )</option>
       </select>
       <div class="seg-control">
         <button class="seg-btn active">Soft GMM Mixture + Bounded Lightness</button>
         <button class="seg-btn">Hard Single-Cluster Baseline</button>
       </div>
-      <a href="index.html" style="font-size: 12px; color: var(--muted); text-decoration: none; margin-left: 10px;">Back to Prototype</a>
     </div>
   </header>
 
   <div class="main-grid">
     <!-- Left Panel -->
     <div class="panel">
-      <div class="panel-title"><span class="badge-num">1</span> "What-If" Drivers</div>
+      <div class="panel-title"><span class="badge-num">1</span> Daily Weather &amp; Terrain Drivers</div>
       
       <div class="slider-group">
-        <div class="slider-hdr"><span>ERC Dryness</span><span>88</span></div>
+        <div class="slider-hdr"><span>ERC Fuel Dryness</span><span>88th pct</span></div>
         <input type="range" value="88" min="0" max="100" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>VPD</span><span>2.9 kPa</span></div>
+        <div class="slider-hdr"><span>Vapor Pressure Deficit (VPD)</span><span>2.9 kPa</span></div>
         <input type="range" value="2.9" min="0" max="5" step="0.1" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Wind Speed</span><span>28 mph</span></div>
+        <div class="slider-hdr"><span>Wind Speed (10m)</span><span>28 mph</span></div>
         <input type="range" value="28" min="0" max="50" />
       </div>
       <div class="slider-group">
@@ -145,22 +180,28 @@
         <input type="range" value="14" min="0" max="100" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Slope</span><span>18°</span></div>
-        <input type="range" value="18" min="0" max="45" />
+        <div class="slider-hdr"><span>7-Day Temp Trend</span><span>+4.2°C above norm</span></div>
+        <input type="range" value="78" min="0" max="100" />
       </div>
       <div class="slider-group">
-        <div class="slider-hdr"><span>Canopy Cover</span><span>58%</span></div>
+        <div class="slider-hdr"><span>Terrain Slope &amp; Canopy</span><span>18° &middot; 58%</span></div>
         <input type="range" value="58" min="0" max="100" />
       </div>
 
       <div class="gmm-box">
-        <div style="font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px;"><span class="badge-num">2</span> Soft Regime Mixture P(Cₖ|x)</div>
-        <div class="gmm-pill-bar">
-          <div class="gmm-seg" style="width:68%; background:#4B5563;">68% R2</div>
-          <div class="gmm-seg" style="width:24%; background:#9CA3AF;">24% R1</div>
-          <div class="gmm-seg" style="width:8%; background:#D1D5DB; color:#374151;">8% R3</div>
+        <div style="font-weight:700; font-size:12px; color:var(--ink); display:flex; align-items:center; gap:6px;">
+          <span class="badge-num">2</span> Soft Regime Membership P(Cₖ|x)
         </div>
-        <div style="font-size:10px; color:var(--muted); margin-top:8px; text-align:center;">68% R2 Foothill WUI &middot; 24% R1 Conifer &middot; 8% R3 Chaparral</div>
+        <div class="gmm-pill-bar">
+          <div class="gmm-seg" style="width:68%; background:#EA580C;">68% R2</div>
+          <div class="gmm-seg" style="width:24%; background:#D97706;">24% R1</div>
+          <div class="gmm-seg" style="width:8%; background:#0D9488;">8% R3</div>
+        </div>
+        <div class="gmm-legend">
+          <div class="gmm-leg-item"><span><i class="dot-sm" style="background:#EA580C;"></i>R2 Sierra Foothill WUI</span><strong>0.68</strong></div>
+          <div class="gmm-leg-item"><span><i class="dot-sm" style="background:#D97706;"></i>R1 Mixed Conifer Timber</span><strong>0.24</strong></div>
+          <div class="gmm-leg-item"><span><i class="dot-sm" style="background:#0D9488;"></i>R3 Coastal/Valley Chaparral</span><strong>0.08</strong></div>
+        </div>
       </div>
     </div>
 
@@ -168,39 +209,52 @@
     <div class="center-col">
       <div id="map-wrap">
         <div id="map"></div>
+        <div class="map-region-tag">
+          <span>Northern California Grid (4km gridMET + FPA-FOD/CAL FIRE)</span>
+          <span style="color:#FBBF24;">&bull; 42 Historical Fire Analogs Shown</span>
+        </div>
         <div class="map-overlay">
-          <div style="font-weight:600; color:var(--ink); display:flex; align-items:center; gap:6px; margin-bottom: 8px;">
-            <span class="badge-num">3</span> Bounded Lightness
+          <div style="font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px; margin-bottom: 6px;">
+            <span class="badge-num">3</span> Bounded Lightness Risk
           </div>
-          <div style="display:flex; gap:4px;">
-            <div style="flex:1; height:12px; background:#F3F4F6; border-radius:2px;"></div>
-            <div style="flex:1; height:12px; background:#D1D5DB; border-radius:2px;"></div>
-            <div style="flex:1; height:12px; background:#9CA3AF; border-radius:2px;"></div>
-            <div style="flex:1; height:12px; background:#4B5563; border-radius:2px;"></div>
+          <div style="font-size:10.5px; color:var(--muted); margin-bottom:6px;">
+            P(Fire|x) = &Sigma;ₖ P(Fire|Cₖ)&middot;P(Cₖ|x)
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:4px;">
-            <span>1.0× Norm</span><span>4.0×+ High</span>
+          <div style="display:flex; gap:3px;">
+            <div style="flex:1; height:12px; background:#FEF3C7; border:1px solid #FDE68A; border-radius:2px;"></div>
+            <div style="flex:1; height:12px; background:#FBBF24; border-radius:2px;"></div>
+            <div style="flex:1; height:12px; background:#EA580C; border-radius:2px;"></div>
+            <div style="flex:1; height:12px; background:#B91C1C; border-radius:2px;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted); margin-top:3px; font-weight:600;">
+            <span>1.0&times; Norm</span><span>2.0&times;</span><span>3.0&times;</span><span>4.0&times;+ Extreme</span>
+          </div>
+          <div style="margin-top:8px; padding-top:6px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:3px; font-size:10px; color:#334155;">
+            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B91C1C;border:1.5px solid #fff;margin-right:5px;"></span>Top Soft-Matched Historical Fires</div>
+            <div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#F59E0B;opacity:0.85;margin-right:5px;"></span>Other Regional Historical Fires (n=42)</div>
           </div>
         </div>
       </div>
 
       <div class="callout-card">
-        <div class="callout-text">
-          <span class="badge-num">4</span>
-          Daily Ignition Risk P(Fire|x) = 3.8× Seasonal Normal (High Tier) — Historical Outcome Range:
+        <div class="callout-top">
+          <div class="callout-text">
+            <span class="badge-num">4</span>
+            <span>Daily Ignition Risk P(Fire|x) &amp; Historical Outcome Distribution (Area &amp; Duration)</span>
+          </div>
+          <span class="risk-pill">3.8&times; Seasonal Baseline &middot; High Danger</span>
         </div>
         <div class="range-bar-wrap">
           <div class="range-labels">
-            <span>p10: 24 ac (2d)</span>
-            <span style="color:var(--ink); font-weight:600;">Median: 410 ac (6d)</span>
-            <span>p90: 6,200 ac (18d)</span>
+            <span>p10: <strong>24 acres</strong> (2 days)</span>
+            <span style="color:#B91C1C; font-weight:700;">Median Outcome: 410 acres (6 days duration)</span>
+            <span>p90: <strong>6,200 acres</strong> (18 days)</span>
           </div>
           <div class="range-bar">
             <div class="range-iqr"></div>
-            <!-- markers -->
-            <div style="position:absolute; left:10%; top:-4px; width:2px; height:12px; background:var(--ink);"></div>
-            <div style="position:absolute; left:35%; top:-4px; width:2px; height:12px; background:var(--ink);"></div>
-            <div style="position:absolute; left:70%; top:-4px; width:2px; height:12px; background:var(--ink);"></div>
+            <div style="position:absolute; left:12%; top:-3px; width:2.5px; height:11px; background:#D97706;"></div>
+            <div style="position:absolute; left:44%; top:-4px; width:3px; height:13px; background:#0F172A;"></div>
+            <div style="position:absolute; left:76%; top:-3px; width:2.5px; height:11px; background:#B91C1C;"></div>
           </div>
         </div>
       </div>
@@ -209,32 +263,40 @@
     <!-- Right Panel -->
     <div class="panel">
       <div>
-        <div class="panel-title" style="margin-bottom:12px;"><span class="badge-num">5</span> Environmental DNA</div>
-        <div class="dna-row"><div class="dna-lbl">ERC</div><div class="dna-bars"><div class="bar-q" style="width:85%"></div><div class="bar-t" style="width:80%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">VPD</div><div class="dna-bars"><div class="bar-q" style="width:72%"></div><div class="bar-t" style="width:70%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">Wind</div><div class="dna-bars"><div class="bar-q" style="width:65%"></div><div class="bar-t" style="width:62%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">Slope</div><div class="dna-bars"><div class="bar-q" style="width:45%"></div><div class="bar-t" style="width:42%"></div></div></div>
-        <div class="dna-row"><div class="dna-lbl">Canopy</div><div class="dna-bars"><div class="bar-q" style="width:58%"></div><div class="bar-t" style="width:55%"></div></div></div>
+        <div class="panel-title" style="margin-bottom:6px;"><span class="badge-num">5</span> Environmental Profile Comparison</div>
+        <div class="dna-legend">
+          <span><i class="dot-sm" style="background:#DC2626;"></i>Selected Location (Today)</span>
+          <span><i class="dot-sm" style="background:#2563EB;"></i>Matched Fire Avg</span>
+        </div>
+        <div class="dna-row"><div class="dna-lbl">ERC Dry</div><div class="dna-bars"><div class="bar-q" style="width:88%"></div><div class="bar-t" style="width:84%"></div></div><div class="dna-val">88 pct</div></div>
+        <div class="dna-row"><div class="dna-lbl">VPD</div><div class="dna-bars"><div class="bar-q" style="width:76%"></div><div class="bar-t" style="width:73%"></div></div><div class="dna-val">2.9 kPa</div></div>
+        <div class="dna-row"><div class="dna-lbl">Wind</div><div class="dna-bars"><div class="bar-q" style="width:70%"></div><div class="bar-t" style="width:66%"></div></div><div class="dna-val">28 mph</div></div>
+        <div class="dna-row"><div class="dna-lbl">7d Trend</div><div class="dna-bars"><div class="bar-q" style="width:78%"></div><div class="bar-t" style="width:74%"></div></div><div class="dna-val">+4.2°C</div></div>
+        <div class="dna-row"><div class="dna-lbl">Slope</div><div class="dna-bars"><div class="bar-q" style="width:48%"></div><div class="bar-t" style="width:45%"></div></div><div class="dna-val">18°</div></div>
+        <div class="dna-row"><div class="dna-lbl">Canopy</div><div class="dna-bars"><div class="bar-q" style="width:58%"></div><div class="bar-t" style="width:55%"></div></div><div class="dna-val">58%</div></div>
       </div>
 
-      <div style="font-size:12px; font-weight:600; color:var(--ink); margin-top:8px;">Historical Fire Twins (Northern CA)</div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="font-size:12px; font-weight:700; color:var(--ink); margin-top:2px;">Matched Historical Wildfires (Northern CA)</div>
+      <div style="display:flex; flex-direction:column; gap:9px;">
         <div class="twin-card">
-          <div class="twin-hdr"><span>#1 Camp Fire (Butte, CA)</span></div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <span class="pill">96.4% Match</span><span class="pill">153,336 ac</span><span class="pill">17 days</span>
+          <div class="twin-hdr"><span>#1 Camp Fire (Butte Co., Nov 2018)</span></div>
+          <div class="twin-sub">Regime Mixture: 71% R2 Foothill &middot; 22% R1 Conifer</div>
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <span class="pill match">96.4% Soft Match</span><span class="pill">153,336 ac</span><span class="pill">17 days</span>
           </div>
         </div>
-        <div class="twin-card">
-          <div class="twin-hdr"><span>#2 Tubbs Fire (Sonoma, CA)</span></div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <span class="pill">92.8% Match</span><span class="pill">36,807 ac</span><span class="pill">23 days</span>
+        <div class="twin-card rank2">
+          <div class="twin-hdr"><span>#2 Tubbs Fire (Sonoma/Napa, Oct 2017)</span></div>
+          <div class="twin-sub">Regime Mixture: 64% R2 Foothill &middot; 25% R3 Chaparral</div>
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <span class="pill match">92.8% Soft Match</span><span class="pill">36,807 ac</span><span class="pill">23 days</span>
           </div>
         </div>
-        <div class="twin-card">
-          <div class="twin-hdr"><span>#3 Carr Fire (Shasta, CA)</span></div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <span class="pill">89.5% Match</span><span class="pill">229,651 ac</span><span class="pill">38 days</span>
+        <div class="twin-card rank3">
+          <div class="twin-hdr"><span>#3 Carr Fire (Shasta/Trinity, Jul 2018)</span></div>
+          <div class="twin-sub">Regime Mixture: 61% R2 Foothill &middot; 31% R1 Conifer</div>
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <span class="pill match">89.5% Soft Match</span><span class="pill">229,651 ac</span><span class="pill">38 days</span>
           </div>
         </div>
       </div>
@@ -242,28 +304,140 @@
   </div>
 
   <script>
-    const map = L.map('map', { zoomControl: false }).setView([39.76, -121.62], 9);
+    // Expand view to cover the whole Northern California pilot region
+    const map = L.map('map', { zoomControl: false }).setView([39.35, -121.45], 7);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 16,
     }).addTo(map);
-
-    // Add Solid Lightness circle (Butte County / Paradise-Chico WUI)
-    L.circle([39.76, -121.62], {
-      color: '#4B5563',
-      weight: 0,
-      fillColor: '#4B5563',
-      fillOpacity: 0.8,
-      radius: 18000
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16,
+      opacity: 0.65
     }).addTo(map);
 
-    // Add Dashed Contour
-    L.circle([39.76, -121.62], {
-      color: '#111827',
-      weight: 1.5,
-      dashArray: '4, 4',
-      fillOpacity: 0,
-      radius: 32000
+    // Regional Bounded-Lightness Risk Zones across Northern California (solid color lightness tiers, no alpha washout)
+    const riskZones = [
+      // Extreme Risk (4.0x+): Sierra Foothills / Butte / Plumas / Shasta WUI
+      { coords: [[40.15,-121.95],[40.15,-121.15],[39.35,-121.05],[39.35,-121.80]], color: '#B91C1C', fill: '#B91C1C', op: 0.42 },
+      { coords: [[40.95,-122.75],[40.95,-121.95],[40.35,-121.90],[40.35,-122.75]], color: '#B91C1C', fill: '#B91C1C', op: 0.38 },
+      // High Risk (3.0x): North Bay (Sonoma/Napa/Lake) & El Dorado / Tahoe Foothills
+      { coords: [[39.15,-123.15],[39.15,-122.20],[38.30,-122.15],[38.30,-123.05]], color: '#EA580C', fill: '#EA580C', op: 0.38 },
+      { coords: [[39.35,-121.25],[39.35,-120.35],[38.45,-120.30],[38.45,-121.20]], color: '#EA580C', fill: '#EA580C', op: 0.36 },
+      { coords: [[40.30,-123.55],[40.30,-122.50],[39.35,-122.45],[39.35,-123.55]], color: '#EA580C', fill: '#EA580C', op: 0.33 },
+      // Moderate Risk (2.0x): Northern Sierra / Mendocino / Trinity / Tehama
+      { coords: [[41.45,-123.40],[41.45,-121.40],[40.80,-121.40],[40.80,-123.40]], color: '#F59E0B', fill: '#FBBF24', op: 0.32 },
+      { coords: [[38.45,-121.15],[38.45,-119.90],[37.65,-119.90],[37.65,-121.10]], color: '#F59E0B', fill: '#FBBF24', op: 0.32 },
+      // Low/Baseline Risk (1.0x): Central Valley Floor & Outer Coast
+      { coords: [[39.95,-122.45],[39.95,-121.75],[38.35,-121.30],[38.35,-122.10]], color: '#FDE68A', fill: '#FEF3C7', op: 0.45 }
+    ];
+
+    riskZones.forEach(z => {
+      L.polygon(z.coords, {
+        color: z.color,
+        weight: 1,
+        dashArray: '3, 3',
+        fillColor: z.fill,
+        fillOpacity: z.op
+      }).addTo(map);
+    });
+
+    // Crisp Dashed 80% Soft Regime Boundary Contour around Sierra Foothills & North Bay WUI
+    L.polygon([[40.85,-122.85],[40.25,-121.05],[38.50,-120.35],[38.25,-122.85],[39.65,-123.45]], {
+      color: '#7F1D1D',
+      weight: 2,
+      dashArray: '6, 5',
+      fillOpacity: 0
     }).addTo(map);
+
+    // 42 Historical Wildfire Dots across the entire Northern California region
+    const regionalFires = [
+      // Top Soft-Matched Twins (Highlighted Crimson with white halo)
+      { lat: 39.81, lon: -121.44, r: 9, top: true, name: '#1 Camp Fire (153k ac, 17d)' },
+      { lat: 38.56, lon: -122.62, r: 8, top: true, name: '#2 Tubbs Fire (37k ac, 23d)' },
+      { lat: 40.65, lon: -122.62, r: 9.5, top: true, name: '#3 Carr Fire (230k ac, 38d)' },
+      // Other Major & Moderate Historical Fires across Northern CA
+      { lat: 40.07, lon: -121.20, r: 10, top: false, tier: 'high', name: 'Dixie Fire' },
+      { lat: 39.77, lon: -122.67, r: 10, top: false, tier: 'high', name: 'August Complex' },
+      { lat: 38.67, lon: -120.54, r: 8.5, top: false, tier: 'high', name: 'Caldor Fire' },
+      { lat: 38.72, lon: -122.80, r: 7.5, top: false, tier: 'high', name: 'Kincade Fire' },
+      { lat: 38.55, lon: -122.49, r: 7, top: false, tier: 'high', name: 'Glass Fire' },
+      { lat: 39.20, lon: -122.80, r: 9, top: false, tier: 'high', name: 'Mendocino Complex' },
+      { lat: 38.80, lon: -122.30, r: 8.5, top: false, tier: 'high', name: 'LNU Complex' },
+      { lat: 39.66, lon: -121.28, r: 8, top: false, tier: 'high', name: 'North Complex' },
+      { lat: 40.48, lon: -122.56, r: 7, top: false, tier: 'high', name: 'Zogg Fire' },
+      { lat: 38.85, lon: -122.61, r: 7.5, top: false, tier: 'high', name: 'Valley Fire' },
+      { lat: 37.90, lon: -119.95, r: 8.5, top: false, tier: 'high', name: 'Rim Fire' },
+      { lat: 39.02, lon: -120.72, r: 7, top: false, tier: 'mod' },
+      { lat: 40.92, lon: -123.15, r: 7.5, top: false, tier: 'mod' },
+      { lat: 41.25, lon: -122.85, r: 6.5, top: false, tier: 'mod' },
+      { lat: 41.52, lon: -122.10, r: 7, top: false, tier: 'mod' },
+      { lat: 41.10, lon: -121.45, r: 6, top: false, tier: 'mod' },
+      { lat: 40.35, lon: -121.65, r: 6.5, top: false, tier: 'high' },
+      { lat: 39.95, lon: -120.85, r: 6, top: false, tier: 'mod' },
+      { lat: 39.48, lon: -121.42, r: 6.5, top: false, tier: 'high' },
+      { lat: 39.25, lon: -121.15, r: 5.5, top: false, tier: 'mod' },
+      { lat: 38.95, lon: -120.95, r: 6, top: false, tier: 'high' },
+      { lat: 38.40, lon: -120.65, r: 6, top: false, tier: 'mod' },
+      { lat: 38.12, lon: -120.32, r: 6.5, top: false, tier: 'mod' },
+      { lat: 37.75, lon: -120.25, r: 5.5, top: false, tier: 'mod' },
+      { lat: 39.55, lon: -123.20, r: 6, top: false, tier: 'mod' },
+      { lat: 40.12, lon: -123.45, r: 6.5, top: false, tier: 'mod' },
+      { lat: 40.72, lon: -123.55, r: 7, top: false, tier: 'mod' },
+      { lat: 41.35, lon: -123.35, r: 6.5, top: false, tier: 'mod' },
+      { lat: 38.32, lon: -122.25, r: 6, top: false, tier: 'high' },
+      { lat: 38.98, lon: -122.42, r: 6.5, top: false, tier: 'high' },
+      { lat: 39.42, lon: -122.58, r: 5.5, top: false, tier: 'mod' },
+      { lat: 40.22, lon: -122.35, r: 5.5, top: false, tier: 'mod' },
+      { lat: 40.82, lon: -122.20, r: 6, top: false, tier: 'high' },
+      { lat: 39.88, lon: -121.72, r: 6.5, top: false, tier: 'high' },
+      { lat: 39.12, lon: -121.32, r: 5.5, top: false, tier: 'mod' },
+      { lat: 38.62, lon: -120.88, r: 6, top: false, tier: 'high' },
+      { lat: 37.55, lon: -121.65, r: 6.5, top: false, tier: 'mod' },
+      { lat: 37.25, lon: -122.15, r: 7, top: false, tier: 'high' },
+      { lat: 40.55, lon: -120.75, r: 6, top: false, tier: 'mod' }
+    ];
+
+    const queryLoc = [39.73, -121.60]; // Selected Homeowner Location (Butte County WUI)
+
+    // Draw dashed analog connection lines from Query Location to Top 3 Matched Historical Fires
+    regionalFires.filter(f => f.top).forEach(f => {
+      L.polyline([queryLoc, [f.lat, f.lon]], {
+        color: '#B91C1C',
+        weight: 1.8,
+        dashArray: '4, 4',
+        opacity: 0.85
+      }).addTo(map);
+    });
+
+    // Plot all 42 historical fire dots across Northern California
+    regionalFires.forEach(f => {
+      if (f.top) {
+        L.circleMarker([f.lat, f.lon], {
+          radius: f.r,
+          color: '#FFFFFF',
+          weight: 2,
+          fillColor: '#B91C1C',
+          fillOpacity: 0.95
+        }).addTo(map).bindTooltip(f.name, { permanent: true, direction: 'right', className: 'fire-label', offset: [6, 0] });
+      } else {
+        const fill = f.tier === 'high' ? '#EA580C' : '#F59E0B';
+        L.circleMarker([f.lat, f.lon], {
+          radius: f.r * 0.75,
+          color: '#FFFFFF',
+          weight: 1,
+          fillColor: fill,
+          fillOpacity: 0.82
+        }).addTo(map);
+      }
+    });
+
+    // Selected Query Location Pin
+    L.circleMarker(queryLoc, {
+      radius: 7,
+      color: '#FFFFFF',
+      weight: 2.5,
+      fillColor: '#0F172A',
+      fillOpacity: 1
+    }).addTo(map).bindTooltip('Selected Location (Butte WUI)', { permanent: true, direction: 'left', className: 'query-label', offset: [-8, 0] });
   </script>
 </body>
 </html>
